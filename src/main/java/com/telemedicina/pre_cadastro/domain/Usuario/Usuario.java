@@ -1,19 +1,20 @@
 package com.telemedicina.pre_cadastro.domain.Usuario;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.telemedicina.pre_cadastro.domain.Dto.LoginRequest;
 import com.telemedicina.pre_cadastro.domain.Dto.PreSaveUsuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Endereco;
+import com.telemedicina.pre_cadastro.domain.Usuario.Enums.*;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "cerne_users")
+@Table(name = "tb_users")
 public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -30,9 +31,10 @@ public class Usuario {
     private String celular;
     @Column(name="whatsappContactable")
     private boolean temWhatsapp;
+    @Column(unique = true)
     private String email;
     @Column(name = "password")
-    private String senha;
+    private String password;
     @OneToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
     @JoinColumn(name = "endereco_id")
@@ -41,8 +43,11 @@ public class Usuario {
     private boolean ativo;
     @Column(name="dateCreated ")
     private LocalDateTime dataRegistro;
-    @Enumerated(EnumType.STRING)
-    private Roles role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(name="tb_users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id"))
+    private Set<Roles> roles;
     // Campos de cadastro completo
     private String cns;
     @Enumerated(EnumType.STRING)
@@ -103,7 +108,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, String sexo, String celular,boolean temWhatsapp, String email, String senha, Endereco endereco, boolean ativo, LocalDateTime dataRegistro, Roles role, String cns, Racas raca, String nomeSocial, TiposNacionalidade nacionalidade, String nomeMae, String nomePai, String pisPasep, String grauDeInstrução, SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho, List<String> ocupacoes, boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero, boolean infoDeficiencia, Deficiencias deficiencia, boolean planoSaude, boolean comunidadeTradicional, boolean menorQueDoisAnos, boolean hipertensaoArterialSistemica, boolean diabetes, boolean hanseniase, boolean tuberculose, boolean doencaMental) {
+    public Usuario(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, String sexo, String celular, boolean temWhatsapp, String email, String password, Endereco endereco, boolean ativo, LocalDateTime dataRegistro, Set<Roles> roles, String cns, Racas raca, String nomeSocial, TiposNacionalidade nacionalidade, String nomeMae, String nomePai, String pisPasep, String grauDeInstrução, SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho, List<String> ocupacoes, boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero, boolean infoDeficiencia, Deficiencias deficiencia, boolean planoSaude, boolean comunidadeTradicional, boolean menorQueDoisAnos, boolean hipertensaoArterialSistemica, boolean diabetes, boolean hanseniase, boolean tuberculose, boolean doencaMental) {
         this.id = id;
         this.cpf = cpf;
         this.nomeCompleto = nomeCompleto;
@@ -112,11 +117,11 @@ public class Usuario {
         this.celular = celular;
         this.temWhatsapp = temWhatsapp;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
         this.endereco = endereco;
         this.ativo = ativo;
         this.dataRegistro = dataRegistro;
-        this.role = role;
+        this.roles = roles;
         this.cns = cns;
         this.raca = raca;
         this.nomeSocial = nomeSocial;
@@ -150,7 +155,7 @@ public class Usuario {
         this.sexo = data.sexo();
         this.celular = data.sexo();
         this.email = data.email();
-        this.senha = data.senha();
+        this.password = data.senha();
         this.ativo = true;
         this.dataRegistro = LocalDateTime.now();
         this.adicionarEndereco(new Endereco(data.endereco()));
@@ -225,12 +230,12 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Endereco getEndereco() {
@@ -257,12 +262,12 @@ public class Usuario {
         this.dataRegistro = dataRegistro;
     }
 
-    public Roles getRole() {
-        return role;
+    public Set<Roles> getRoles() {
+        return roles;
     }
 
-    public void setRole(Roles role) {
-        this.role = role;
+    public void setRole(Set<Roles> roles) {
+        this.roles = roles;
     }
 
     public String getCns() {
@@ -455,5 +460,9 @@ public class Usuario {
 
     public void setDoencaMental(boolean doencaMental) {
         this.doencaMental = doencaMental;
+    }
+
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.password(), this.password);
     }
 }

@@ -5,12 +5,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.telemedicina.pre_cadastro.domain.Dto.SaveEnderecoRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.time.LocalDateTime;
 
-@Table(name = "cerne_users_address")
+@Table(name = "tb_users_address")
 @Entity
 public class Endereco {
 

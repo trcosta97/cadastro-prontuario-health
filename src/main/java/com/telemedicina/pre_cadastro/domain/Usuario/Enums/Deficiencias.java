@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Usuario;
+package com.telemedicina.pre_cadastro.domain.Usuario.Enums;
 
 public enum Deficiencias {
     VISUAL("Visual"),

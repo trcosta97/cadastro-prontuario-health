@@ -1,5 +1,6 @@
 package com.telemedicina.pre_cadastro.repository;
 
+import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -7,9 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
+public interface RoleRepository extends JpaRepository<Roles,Long> {
 
-    Optional<Usuario> getUsuarioById(Long id);
-    Optional<Usuario> findByEmail(String email);
+    Optional<Roles> getRolesById(Long id);
 
+
+    Optional<Roles> findByName(String name);
 }

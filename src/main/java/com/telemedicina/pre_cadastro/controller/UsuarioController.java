@@ -6,6 +6,7 @@ import com.telemedicina.pre_cadastro.domain.Dto.SetRoleDTO;
 import com.telemedicina.pre_cadastro.domain.Dto.UpdateUsuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UsuarioController {
 
 
     @PostMapping
-    public ResponseEntity<Usuario> save(@RequestBody PreSaveUsuarioRequestDTO data, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<Usuario> save(@RequestBody @Valid PreSaveUsuarioRequestDTO data, UriComponentsBuilder uriBuilder){
         var newUsuario = service.save(new Usuario(data));
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(newUsuario.getId()).toUri();
         return ResponseEntity.created(uri).body(newUsuario);
@@ -28,14 +29,14 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody UpdateUsuarioRequestDTO data) {
+    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody @Valid UpdateUsuarioRequestDTO data) {
         var updatedUsuario = service.update(id, data);
         return ResponseEntity.ok(updatedUsuario);
     }
 
     @PutMapping("/{id}/role")
     public ResponseEntity<Usuario> setRole(@PathVariable Long id, @RequestBody SetRoleDTO data) {
-        var updatedUsuario = service.setRole(id, data.role());
+        var updatedUsuario = service.setRole(id, data.roles());
         return ResponseEntity.ok(updatedUsuario);
     }
 
