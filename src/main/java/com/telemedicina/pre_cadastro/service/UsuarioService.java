@@ -3,6 +3,7 @@ package com.telemedicina.pre_cadastro.service;
 import com.telemedicina.pre_cadastro.domain.Dto.UpdateUsuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ public class UsuarioService {
 
     @Autowired
     UsuarioRepository repository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
 
 
@@ -65,10 +69,13 @@ public class UsuarioService {
         return repository.save(usuario);
     }
 
-    public Usuario setRole(Long id, Set<Roles> roles) {
+    public Usuario setRole(Long id, Long roleId) {
         var usuario = repository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        usuario.setRole(roles);
+        var role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role não encontrada"));
+
+
+        usuario.setRole(Set.of(role));
         return repository.save(usuario);
     }
 

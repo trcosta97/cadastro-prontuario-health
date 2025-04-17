@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/token/**").permitAll()
+                        .requestMatchers("/usuario/cadastro").permitAll()
+                        .requestMatchers("/usuario/{id}/role").hasRole(Roles.Values.ADMIN.name())
                         .anyRequest().authenticated())
 
                 .csrf(csrf -> csrf.disable())

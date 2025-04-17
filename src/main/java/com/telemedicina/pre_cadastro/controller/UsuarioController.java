@@ -2,7 +2,6 @@ package com.telemedicina.pre_cadastro.controller;
 
 
 import com.telemedicina.pre_cadastro.domain.Dto.PreSaveUsuarioRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Dto.SetRoleDTO;
 import com.telemedicina.pre_cadastro.domain.Dto.UpdateUsuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
@@ -20,7 +19,7 @@ public class UsuarioController {
     UsuarioService service;
 
 
-    @PostMapping
+    @PostMapping("/cadastro")
     public ResponseEntity<Usuario> save(@RequestBody @Valid PreSaveUsuarioRequestDTO data, UriComponentsBuilder uriBuilder){
         var newUsuario = service.save(new Usuario(data));
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(newUsuario.getId()).toUri();
@@ -34,9 +33,9 @@ public class UsuarioController {
         return ResponseEntity.ok(updatedUsuario);
     }
 
-    @PutMapping("/{id}/role")
-    public ResponseEntity<Usuario> setRole(@PathVariable Long id, @RequestBody SetRoleDTO data) {
-        var updatedUsuario = service.setRole(id, data.roles());
+    @PutMapping("/{userId}/{roleId}/role")
+    public ResponseEntity<Usuario> setRole(@PathVariable Long id, @PathVariable Long roleId) {
+        var updatedUsuario = service.setRole(id, roleId);
         return ResponseEntity.ok(updatedUsuario);
     }
 
