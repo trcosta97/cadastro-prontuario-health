@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Todos os Prontuários</title>
+</head>
+<body>
+<h1>Prontuários</h1>
+<ul id="lista-prontuarios"></ul>
+
+<script>
+    const token = localStorage.getItem("jwtToken");
+
+
+
+
+    fetch("api/prontuarios/all", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const lista = document.getElementById("lista-prontuarios");
+      data.forEach(prontuario => {
+        const item = document.createElement("li");
+
+        const nomePaciente = prontuario.paciente ? prontuario.paciente.nomeCompleto : "(sem paciente)";
+        const nomeMedico = prontuario.medico?.nomeCompleto || "(sem médico)";
+        const cpfPaciente = prontuario.paciente?.cpf || "(sem CPF)";
+
+
+        item.innerHTML = `
+          <strong>ID:</strong> ${prontuario.id} -
+          <strong>Paciente:</strong> ${nomePaciente} -
+          <strong>CPF:</strong> ${cpfPaciente} -
+          <strong>Médico:</strong> ${nomeMedico} -
+          <a href="prontuario/${prontuario.id || ''}">[Ver Detalhes]</a>
+        `;
+        lista.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("Erro ao buscar prontuários:", err);
+    });
+</script>
+</body>
+</html>

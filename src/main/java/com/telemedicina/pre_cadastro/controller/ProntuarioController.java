@@ -119,6 +119,16 @@ public class ProntuarioController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Prontuario>> listarTodosProntuarios() {
+        try {
+            List<Prontuario> prontuarios = prontuarioService.getAll();
+            return ResponseEntity.ok(prontuarios);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // Listar prontuários atendidos pelo médico logado
     @GetMapping("/medico")
     public ResponseEntity<List<Prontuario>> listarProntuariosPorMedicoLogado() {

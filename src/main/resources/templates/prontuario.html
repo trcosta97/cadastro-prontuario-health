@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Prontuário</title>
+</head>
+<body>
+<h1>Detalhes do Prontuário</h1>
+<div id="detalhes-prontuario"></div>
+
+<script>
+    const token = localStorage.getItem("jwtToken");
+    const path = window.location.pathname;
+    const id = path.substring(path.lastIndexOf('/') + 1);
+
+console.log("ID extraído do caminho:", id);
+
+    console.log("ID extraído:", id);
+
+    fetch(`/api/prontuarios/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      return res.json();
+    })
+    .then(prontuario => {
+      console.log("Prontuário recebido:", prontuario);
+
+      if (!prontuario) {
+        document.getElementById("detalhes-prontuario").innerText = "Prontuário não encontrado.";
+        return;
+      }
+
+      const div = document.getElementById("detalhes-prontuario");
+      const nomeMedico = prontuario.medico?.nomeCompleto || "(sem médico)";
+      const nomePaciente = prontuario.paciente?.nomeCompleto || "(sem paciente)";
+
+      div.innerHTML = `
+        <p><strong>ID:</strong> ${prontuario.id}</p>
+        <p><strong>Paciente:</strong> ${nomePaciente}</p>
+        <p><strong>Médico:</strong> ${nomeMedico}</p>
+        <p><strong>Data de Atendimento:</strong> ${prontuario.dataAtendimento}</p>
+        <p><strong>Subjetivo:</strong> ${prontuario.subjetivo}</p>
+        <p><strong>Objetivo:</strong> ${prontuario.objetivo}</p>
+        <p><strong>Avaliação:</strong> ${prontuario.avaliacao}</p>
+        <p><strong>Plano:</strong> ${prontuario.plano}</p>
+        <p><strong>HAS:</strong> ${prontuario.hipertensaoArterialSistemica ? "Sim" : "Não"}</p>
+        <p><strong>Diabetes:</strong> ${prontuario.diabetes ? "Sim" : "Não"}</p>
+        <p><strong>Tuberculose:</strong> ${prontuario.tuberculose ? "Sim" : "Não"}</p>
+        <p><strong>Hanseníase:</strong> ${prontuario.hanseniase ? "Sim" : "Não"}</p>
+        <p><strong>Ativo:</strong> ${prontuario.ativo ? "Sim" : "Não"}</p>
+      `;
+    })
+    .catch(err => {
+      document.getElementById("detalhes-prontuario").innerText = "Erro ao carregar prontuário.";
+      console.error("Erro:", err);
+    });
+
+</script>
+</body>
+</html>

@@ -45,6 +45,10 @@ public class ProntuarioService {
                 .orElseThrow(() -> new NoSuchElementException("Prontuário não encontrado com ID: " + id));
     }
 
+    public List<Prontuario> getAll() {
+        return prontuarioRepository.findAll();
+    }
+
     @Transactional
     public Prontuario criarProntuario(ProntuarioRequestDTO dto, Long medicoId) {
         Optional<Paciente> pacienteOpt = pacienteRepository.findById(dto.pacienteId());
@@ -118,4 +122,6 @@ public class ProntuarioService {
         prontuario.setAtivo(false);
         prontuarioRepository.save(prontuario);
     }
+
+
 }

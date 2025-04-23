@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Atualizar Cadastro - Sistema de Prontuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-4">Atualizar Cadastro do Paciente</h2>
+    <form id="update-form">
+        <div class="mb-3">
+            <label class="form-label">CNS</label>
+            <input type="text" class="form-control" id="cns">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nome Social</label>
+            <input type="text" class="form-control" id="nomeSocial">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nome da Mãe</label>
+            <input type="text" class="form-control" id="nomeMae">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nome do Pai</label>
+            <input type="text" class="form-control" id="nomePai">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">PIS/PASEP</label>
+            <input type="text" class="form-control" id="pisPasep">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Raça</label>
+            <select class="form-control" id="raca">
+                <option value="BRANCA">Branca</option>
+                <option value="PRETA">Preta</option>
+                <option value="PARDA">Parda</option>
+                <option value="AMARELA">Amarela</option>
+                <option value="INDIGENA">Indígena</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nacionalidade</label>
+            <select class="form-control" id="nacionalidade">
+                <option value="BRASILEIRA">Brasileira</option>
+                <option value="ESTRANGEIRA">Estrangeira</option>
+                <option value="NATURALIZADA">Naturalizada</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Situação no Mercado de Trabalho</label>
+            <select class="form-control" id="situacaoMercadoDeTrabalho">
+                <option value="ANALFABETA">Analfabeta</option>
+                <option value="FUNDAMENTAL_INCOMPLETO">Fundamental Incompleto</option>
+                <option value="FUNDAMENTAL_COMPLETO">Fundamental Completo</option>
+                <option value="MEDIO_INCOMPLETO">Médio Incompleto</option>
+                <option value="MEDIO_COMPLETO">Médio Completo</option>
+                <option value="SUPERIOR_INCOMPLETO">Superior Incompleto</option>
+                <option value="SUPERIOR_COMPLETO">Superior Completo</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Orientação Sexual</label>
+            <select class="form-control" id="orientacaoSexual">
+                <option value="HETEROSEXUALIDADE">Heterossexual</option>
+                <option value="HOMOSSEXUALIDADE">Homossexual</option>
+                <option value="BISEXUALIDADE">Bissexual</option>
+                <option value="PANSSEXUALIDADE">Panssexual</option>
+                <option value="DEMISEXUALIDADE">Demissexual</option>
+                <option value="LITERSEXUALIDADE">Literosexual</option>
+                <option value="AUTOSEXUALIDADE">Autosexual</option>
+                <option value="ANTROSEXUALIDADE">Antrosexual</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Identidade de Gênero</label>
+            <select class="form-control" id="identidadeGenero">
+                <option value="CISGENERO">Cisgênero</option>
+                <option value="TRANSGENERO">Transgênero</option>
+                <option value="HOMOSSEXUAL">Homossexual</option>
+                <option value="BISEXUAL">Bissexual</option>
+                <option value="TRANSGEENRO_TRANSSEXUAL">Transgênero/Transsexual</option>
+                <option value="TRAVESTI">Travesti</option>
+                <option value="INTERSEXUAL">Intersexual</option>
+                <option value="NAO_BINARIO">Não Binário</option>
+                <option value="OUTRO">Outro</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Deficiência</label>
+            <select class="form-control" id="deficiencia">
+                <option value="VISUAL">Visual</option>
+                <option value="AUDITIVA">Auditiva</option>
+                <option value="FISICA">Física</option>
+                <option value="INTELECTUAL">Intelectual</option>
+            </select>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="temWhatsapp">
+            <label class="form-check-label">Tem WhatsApp</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="infoOrientacao">
+            <label class="form-check-label">Informou orientação sexual</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="infoIdentidadeGenero">
+            <label class="form-check-label">Informou identidade de gênero</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="infoDeficiencia">
+            <label class="form-check-label">Informou deficiência</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="planoSaude">
+            <label class="form-check-label">Tem plano de saúde</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="comunidadeTradicional">
+            <label class="form-check-label">Pertence a comunidade tradicional</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="menorQueDoisAnos">
+            <label class="form-check-label">Menor que dois anos</label>
+        </div>
+
+        <!-- Comorbidades -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hipertensaoArterialSistemica">
+            <label class="form-check-label">Hipertensão Arterial</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="diabetes">
+            <label class="form-check-label">Diabetes</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hanseniase">
+            <label class="form-check-label">Hanseníase</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="tuberculose">
+            <label class="form-check-label">Tuberculose</label>
+        </div>
+        <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="doencaMental">
+            <label class="form-check-label">Doença Mental</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Atualizar Cadastro</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('update-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            alert('Usuário não autenticado.');
+            return;
+        }
+
+        const id = prompt("Digite o ID do paciente:"); // ou pegue via rota ou input oculto
+
+        const data = {
+            cns: document.getElementById('cns').value,
+            nomeSocial: document.getElementById('nomeSocial').value,
+            nomeMae: document.getElementById('nomeMae').value,
+            nomePai: document.getElementById('nomePai').value,
+            pisPasep: document.getElementById('pisPasep').value,
+            raca: document.getElementById('raca').value,
+            nacionalidade: document.getElementById('nacionalidade').value,
+            situacaoMercadoDeTrabalho: document.getElementById('situacaoMercadoDeTrabalho').value,
+            temWhatsapp: document.getElementById('temWhatsapp').checked,
+            infoOrientacao: document.getElementById('infoOrientacao').checked,
+            orientacaoSexual: document.getElementById('orientacaoSexual').value,
+            infoIdentidadeGenero: document.getElementById('infoIdentidadeGenero').checked,
+            identidadeGenero: document.getElementById('identidadeGenero').value,
+            infoDeficiencia: document.getElementById('infoDeficiencia').checked,
+            deficiencia: document.getElementById('deficiencia').value,
+            planoSaude: document.getElementById('planoSaude').checked,
+            comunidadeTradicional: document.getElementById('comunidadeTradicional').checked,
+            menorQueDoisAnos: document.getElementById('menorQueDoisAnos').checked,
+            hipertensaoArterialSistemica: document.getElementById('hipertensaoArterialSistemica').checked,
+            diabetes: document.getElementById('diabetes').checked,
+            hanseniase: document.getElementById('hanseniase').checked,
+            tuberculose: document.getElementById('tuberculose').checked,
+            doencaMental: document.getElementById('doencaMental').checked,
+            ocupacoes: [] // você pode adicionar um campo para isso depois
+        };
+
+        fetch(`http://localhost:8080/paciente/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao atualizar o paciente');
+            return response.json();
+        })
+        .then(updated => {
+            alert('Cadastro atualizado com sucesso!');
+            window.location.href = '/home';
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Erro ao atualizar o cadastro');
+        });
+    });
+</script>
+</body>
+</html>
