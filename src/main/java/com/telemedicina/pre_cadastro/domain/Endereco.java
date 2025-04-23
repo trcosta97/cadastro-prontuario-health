@@ -3,6 +3,7 @@ package com.telemedicina.pre_cadastro.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.telemedicina.pre_cadastro.domain.Dto.SaveEnderecoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import jakarta.persistence.*;
 
@@ -32,7 +33,7 @@ public class Endereco {
     @OneToOne(mappedBy = "endereco")
     @JsonBackReference
     @PrimaryKeyJoinColumn(name="userId")
-    private Usuario usuario;
+    private Paciente paciente;
     @Column(name="isActive")
     private boolean ativo;
     @Column(name="createdAt")
@@ -41,7 +42,7 @@ public class Endereco {
     public Endereco() {
     }
 
-    public Endereco(Long id, String cep, String logradouro, String number, String bairro, String cidade, String estado, String complemento, Usuario usuario, boolean ativo, LocalDateTime dataRegsitro) {
+    public Endereco(Long id, String cep, String logradouro, String number, String bairro, String cidade, String estado, String complemento, Paciente paciente, boolean ativo, LocalDateTime dataRegsitro) {
         this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;
@@ -50,7 +51,7 @@ public class Endereco {
         this.cidade = cidade;
         this.estado = estado;
         this.complemento = complemento;
-        this.usuario = usuario;
+        this.paciente = paciente;
         this.ativo = ativo;
         this.dataRegsitro = dataRegsitro;
     }
@@ -99,8 +100,8 @@ public class Endereco {
         return complemento;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Paciente getPaciente() {
+        return paciente;
     }
 
     public boolean isAtivo() {
@@ -143,8 +144,8 @@ public class Endereco {
         this.complemento = complemento;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
     public void setAtivo(boolean ativo) {
@@ -153,5 +154,11 @@ public class Endereco {
 
     public void setDataRegsitro(LocalDateTime dataRegsitro) {
         this.dataRegsitro = dataRegsitro;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        if (this.paciente != null) {
+            this.paciente.setEndereco(this);
+        }
     }
 }

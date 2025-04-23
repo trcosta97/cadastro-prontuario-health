@@ -2,9 +2,10 @@ package com.telemedicina.pre_cadastro.controller;
 
 
 import com.telemedicina.pre_cadastro.domain.Dto.PreSavePacienteRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Dto.SaveUsuarioDTO;
 import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.service.PacienteService;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,35 +14,31 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/usuario")
-public class UsuarioController {
+@RequestMapping("/paciente")
+public class PacienteController {
 
     @Autowired
-    UsuarioService service;
+    PacienteService service;
 
 
     @PostMapping("/cadastro")
-    public ResponseEntity<Usuario> save(@RequestBody @Valid SaveUsuarioDTO data, UriComponentsBuilder uriBuilder){
-        var newUsuario = service.save(new Usuario(data));
+    public ResponseEntity<Paciente> save(@RequestBody @Valid PreSavePacienteRequestDTO data, UriComponentsBuilder uriBuilder){
+        var newUsuario = service.save(new Paciente(data));
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(newUsuario.getId()).toUri();
         return ResponseEntity.created(uri).body(newUsuario);
 
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody @Valid UpdatePacienteRequestDTO data) {
-//        var updatedUsuario = service.update(id, data);
-//        return ResponseEntity.ok(updatedUsuario);
-//    }
-
-    @PutMapping("/{userId}/{roleId}/role")
-    public ResponseEntity<Usuario> setRole(@PathVariable Long id, @PathVariable Long roleId) {
-        var updatedUsuario = service.setRole(id, roleId);
+    @PutMapping("/{id}")
+    public ResponseEntity<Paciente> update(@PathVariable Long id, @RequestBody UpdatePacienteRequestDTO data) {
+        var updatedUsuario = service.update(id, data);
         return ResponseEntity.ok(updatedUsuario);
     }
 
+
+
     @GetMapping("/all")
-    public ResponseEntity<Iterable<Usuario>> getAll() {
+    public ResponseEntity<Iterable<Paciente>> getAll() {
         var usuarios = service.getAll();
         return ResponseEntity.ok(usuarios);
 

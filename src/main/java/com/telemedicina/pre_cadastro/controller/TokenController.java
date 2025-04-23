@@ -1,7 +1,8 @@
 package com.telemedicina.pre_cadastro.controller;
 
-import com.telemedicina.pre_cadastro.domain.Dto.LoginRequest;
-import com.telemedicina.pre_cadastro.domain.Dto.LoginResponse;
+import com.telemedicina.pre_cadastro.domain.Dto.LoginRequestDTO;
+import com.telemedicina.pre_cadastro.domain.Dto.LoginResponseDTO;
+import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,15 +34,15 @@ public class TokenController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
-        var user = usuarioRepository.findByEmail(loginRequest.email());
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO){
+        var user = usuarioRepository.findByEmail(loginRequestDTO.email());
 
-        if(user.isEmpty() || !user.get().isLoginCorrect(loginRequest, bCryptPasswordEncoder)){
+        if(user.isEmpty() || !user.get().isLoginCorrect(loginRequestDTO, bCryptPasswordEncoder)){
             throw new BadCredentialsException("Usuário não encontrado ou senha incorreta");
         }
 
         var now = Instant.now();
-        var expiresIn = 300L;
+        var expiresIn = 3000L;
 
         var claims = JwtClaimsSet.builder()
                 .issuer("telemedicina")
@@ -52,7 +53,7 @@ public class TokenController {
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return ResponseEntity.ok(new LoginResponse(jwtValue, expiresIn));
+        return ResponseEntity.ok(new LoginResponseDTO(jwtValue, expiresIn));
     }
 
 }

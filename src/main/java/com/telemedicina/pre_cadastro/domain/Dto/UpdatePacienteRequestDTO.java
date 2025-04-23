@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record UpdateUsuarioRequestDTO(
+public record UpdatePacienteRequestDTO(
 
         @Pattern(regexp = "\\d{15}", message = "O CNS deve conter 15 dígitos numéricos")
         String cns,

@@ -8,7 +8,7 @@ import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.annotation.Immutable;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -33,16 +32,54 @@ public class SecurityConfig {
     @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
 
+    /**
+     * Configuração para as páginas web (Thymeleaf)
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher(
+                        "/login-page",
+                        "/home",
+                        "/cadastro-paciente",
+                        "/novo-prontuario",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**"
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login-page", "/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
+
+    /**
+     * Configuração para a API REST com JWT
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(
+                        "/api/**",
+                        "/token/**",
+                        "/paciente/**",
+                        "/usuario/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**"
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/token/**").permitAll()
+                        .requestMatchers("/token/**", "/api/token").permitAll()  // Certifique-se de que isto corresponda ao seu endpoint exato
                         .requestMatchers("/usuario/cadastro").permitAll()
+                        .requestMatchers("/usuario/all").permitAll()
+                        .requestMatchers("/paciente/cadastro").permitAll()
                         .requestMatchers("/usuario/{id}/role").hasRole(Roles.Values.ADMIN.name())
                         .anyRequest().authenticated())
-
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -68,7 +105,4 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
 }

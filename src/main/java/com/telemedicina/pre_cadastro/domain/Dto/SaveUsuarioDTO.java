@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public record PreSaveUsuarioRequestDTO(
+public record SaveUsuarioDTO(
 
         @NotBlank(message = "O nome completo é obrigatório")
         @Size(max = 100, message = "O nome completo deve ter no máximo 100 caracteres")
@@ -22,8 +22,6 @@ public record PreSaveUsuarioRequestDTO(
         @NotBlank(message = "O sexo é obrigatório")
         @Pattern(regexp = "^(M|F|O)$", message = "Sexo deve ser 'M', 'F' ou 'O'")
         String sexo,
-
-        boolean gestante,
 
         @NotBlank(message = "O celular é obrigatório")
         @Pattern(regexp = "\\d{11}", message = "O celular deve conter 11 dígitos (DDD + número)")
