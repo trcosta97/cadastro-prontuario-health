@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .patient-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 20px;
+        }
+
+        .patient-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: #3498db;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .info-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            width: 200px;
+            color: #34495e;
+        }
+
+        .info-value {
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .tag-positive {
+            background-color: #2ecc71;
+        }
+
+        .tag-negative {
+            background-color: #e74c3c;
+        }
+
+        .tag-neutral {
+            background-color: #3498db;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Detalhes do Paciente</h1>
+    <div id="loading">Carregando dados do paciente...</div>
+    <div id="patient-info" style="display: none;">
+        <!-- Informações Básicas -->
+        <div class="patient-section">
+            <div class="section-title">Informações Básicas</div>
+            <div class="info-row">
+                <div class="info-label">Nome Completo:</div>
+                <div class="info-value" id="nomeCompleto"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Nome Social:</div>
+                <div class="info-value" id="nomeSocial"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">CPF:</div>
+                <div class="info-value" id="cpf"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">CNS:</div>
+                <div class="info-value" id="cns"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Data de Nascimento:</div>
+                <div class="info-value" id="dataNascimento"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Sexo:</div>
+                <div class="info-value" id="sexo"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Raça:</div>
+                <div class="info-value" id="raca"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Nacionalidade:</div>
+                <div class="info-value" id="nacionalidade"></div>
+            </div>
+        </div>
+
+        <!-- Informações Pessoais -->
+        <div class="patient-section">
+            <div class="section-title">Informações Familiares</div>
+            <div class="info-row">
+                <div class="info-label">Nome da Mãe:</div>
+                <div class="info-value" id="nomeMae"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Nome do Pai:</div>
+                <div class="info-value" id="nomePai"></div>
+            </div>
+        </div>
+
+        <!-- Contato -->
+        <div class="patient-section">
+            <div class="section-title">Contato</div>
+            <div class="info-row">
+                <div class="info-label">Celular:</div>
+                <div class="info-value" id="celular"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tem WhatsApp:</div>
+                <div class="info-value" id="temWhatsapp"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">E-mail:</div>
+                <div class="info-value" id="email"></div>
+            </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="patient-section">
+            <div class="section-title">Endereço</div>
+            <div class="info-row">
+                <div class="info-label">CEP:</div>
+                <div class="info-value" id="cep"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Logradouro:</div>
+                <div class="info-value" id="logradouro"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Número:</div>
+                <div class="info-value" id="numero"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Complemento:</div>
+                <div class="info-value" id="complemento"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Bairro:</div>
+                <div class="info-value" id="bairro"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Cidade:</div>
+                <div class="info-value" id="cidade"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Estado:</div>
+                <div class="info-value" id="estado"></div>
+            </div>
+        </div>
+
+        <!-- Informações Socioeconômicas -->
+        <div class="patient-section">
+            <div class="section-title">Informações Socioeconômicas</div>
+            <div class="info-row">
+                <div class="info-label">PIS/PASEP:</div>
+                <div class="info-value" id="pisPasep"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Grau de Instrução:</div>
+                <div class="info-value" id="grauDeInstrucao"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Situação no Mercado:</div>
+                <div class="info-value" id="situacaoMercadoDeTrabalho"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Ocupações:</div>
+                <div class="info-value" id="ocupacoes"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Plano de Saúde:</div>
+                <div class="info-value" id="planoSaude"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Comunidade Tradicional:</div>
+                <div class="info-value" id="comunidadeTradicional"></div>
+            </div>
+        </div>
+
+        <!-- Informações de Gênero e Orientação -->
+        <div class="patient-section">
+            <div class="section-title">Informações de Gênero e Orientação</div>
+            <div class="info-row">
+                <div class="info-label">Informou Orientação:</div>
+                <div class="info-value" id="infoOrientacao"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Orientação Sexual:</div>
+                <div class="info-value" id="orientacaoSexual"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Informou Identidade de Gênero:</div>
+                <div class="info-value" id="infoIdentidadeGenero"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Identidade de Gênero:</div>
+                <div class="info-value" id="identidadeGenero"></div>
+            </div>
+        </div>
+
+        <!-- Condições de Saúde -->
+        <div class="patient-section">
+            <div class="section-title">Condições de Saúde</div>
+            <div class="info-row">
+                <div class="info-label">Informou Deficiência:</div>
+                <div class="info-value" id="infoDeficiencia"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Deficiência:</div>
+                <div class="info-value" id="deficiencia"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Menor que Dois Anos:</div>
+                <div class="info-value" id="menorQueDoisAnos"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Comorbidades:</div>
+                <div class="info-value" id="comorbidades"></div>
+            </div>
+        </div>
+
+        <!-- Informações do Sistema -->
+        <div class="patient-section">
+            <div class="section-title">Informações do Sistema</div>
+            <div class="info-row">
+                <div class="info-label">ID:</div>
+                <div class="info-value" id="id"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status:</div>
+                <div class="info-value" id="ativo"></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Data de Registro:</div>
+                <div class="info-value" id="dataRegistro"></div>
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="buttons">
+            <a href="#" id="btnAtualizar" class="btn btn-primary">Atualizar Cadastro</a>
+            <a href="/todos-pacientes" class="btn btn-secondary">Voltar para Lista</a>
+        </div>
+    </div>
+
+    <div id="error-message" style="display: none;" class="alert alert-danger mt-3"></div>
+</div>
+
+<script>
+    // Função para obter o ID do paciente da URL
+    function getPatientIdFromUrl() {
+        const pathParts = window.location.pathname.split('/');
+        return pathParts[pathParts.length - 1];
+    }
+
+    // Função para formatar datas
+    function formatDate(dateString) {
+        if (!dateString) return 'Não informado';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    }
+
+    // Função para formatar valores booleanos
+    function formatBoolean(value) {
+        return value ? 'Sim' : 'Não';
+    }
+
+    // Função para formatar enums
+    function formatEnum(value) {
+        if (!value) return 'Não informado';
+
+        // Converter de SNAKE_CASE para Formato Título (Title Case)
+        return value.replace(/_/g, ' ').toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
+    // Carregar os dados do paciente
+    document.addEventListener('DOMContentLoaded', function() {
+        const patientId = getPatientIdFromUrl();
+        const token = localStorage.getItem('jwtToken');
+
+        if (!token) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-message').innerText = 'Usuário não autenticado. Faça login para continuar.';
+            document.getElementById('error-message').style.display = 'block';
+            return;
+        }
+
+        // Configurar o botão de atualizar para redirecionar para a página de atualização
+        document.getElementById('btnAtualizar').href = `/completar-cadastro?id=${patientId}`;
+
+        fetch(`/api/paciente/${patientId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar dados do paciente.');
+            }
+            return response.json();
+        })
+        .then(patient => {
+            // Preencher os dados básicos
+            document.getElementById('nomeCompleto').innerText = patient.nomeCompleto || 'Não informado';
+            document.getElementById('nomeSocial').innerText = patient.nomeSocial || 'Não informado';
+            document.getElementById('cpf').innerText = patient.cpf || 'Não informado';
+            document.getElementById('cns').innerText = patient.cns || 'Não informado';
+            document.getElementById('dataNascimento').innerText = formatDate(patient.dataNascimento);
+            document.getElementById('sexo').innerText = patient.sexo || 'Não informado';
+            document.getElementById('raca').innerText = formatEnum(patient.raca);
+            document.getElementById('nacionalidade').innerText = formatEnum(patient.nacionalidade);
+
+            // Informações familiares
+            document.getElementById('nomeMae').innerText = patient.nomeMae || 'Não informado';
+            document.getElementById('nomePai').innerText = patient.nomePai || 'Não informado';
+
+            // Contato
+            document.getElementById('celular').innerText = patient.celular || 'Não informado';
+            document.getElementById('temWhatsapp').innerText = formatBoolean(patient.temWhatsapp);
+            document.getElementById('email').innerText = patient.email || 'Não informado';
+
+            // Endereço
+            if (patient.endereco) {
+                document.getElementById('cep').innerText = patient.endereco.cep || 'Não informado';
+                document.getElementById('logradouro').innerText = patient.endereco.logradouro || 'Não informado';
+                document.getElementById('numero').innerText = patient.endereco.number || 'Não informado';
+                document.getElementById('complemento').innerText = patient.endereco.complemento || 'Não informado';
+                document.getElementById('bairro').innerText = patient.endereco.bairro || 'Não informado';
+                document.getElementById('cidade').innerText = patient.endereco.cidade || 'Não informado';
+                document.getElementById('estado').innerText = patient.endereco.estado || 'Não informado';
+            } else {
+                const enderecoFields = ['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado'];
+                enderecoFields.forEach(field => {
+                    document.getElementById(field).innerText = 'Não informado';
+                });
+            }
+
+            // Informações socioeconômicas
+            document.getElementById('pisPasep').innerText = patient.pisPasep || 'Não informado';
+            document.getElementById('grauDeInstrucao').innerText = patient.grauDeInstrução || 'Não informado';
+            document.getElementById('situacaoMercadoDeTrabalho').innerText = formatEnum(patient.situacaoMercadoDeTrabalho);
+            document.getElementById('ocupacoes').innerText = patient.ocupacoes && patient.ocupacoes.length > 0 ?
+                patient.ocupacoes.join(', ') : 'Não informado';
+            document.getElementById('planoSaude').innerText = formatBoolean(patient.planoSaude);
+            document.getElementById('comunidadeTradicional').innerText = formatBoolean(patient.comunidadeTradicional);
+
+            // Informações de gênero e orientação
+            document.getElementById('infoOrientacao').innerText = formatBoolean(patient.infoOrientacao);
+            document.getElementById('orientacaoSexual').innerText = formatEnum(patient.orientacaoSexual);
+            document.getElementById('infoIdentidadeGenero').innerText = formatBoolean(patient.infoIdentidadeGenero);
+            document.getElementById('identidadeGenero').innerText = formatEnum(patient.identidadeGenero);
+
+            // Condições de saúde
+            document.getElementById('infoDeficiencia').innerText = formatBoolean(patient.infoDeficiencia);
+            document.getElementById('deficiencia').innerText = formatEnum(patient.deficiencia);
+            document.getElementById('menorQueDoisAnos').innerText = formatBoolean(patient.menorQueDoisAnos);
+
+            // Comorbidades
+            const comorbidades = [];
+            if (patient.hipertensaoArterialSistemica) comorbidades.push('<span class="tag tag-neutral">Hipertensão Arterial</span>');
+            if (patient.diabetes) comorbidades.push('<span class="tag tag-neutral">Diabetes</span>');
+            if (patient.hanseniase) comorbidades.push('<span class="tag tag-neutral">Hanseníase</span>');
+            if (patient.tuberculose) comorbidades.push('<span class="tag tag-neutral">Tuberculose</span>');
+            if (patient.doencaMental) comorbidades.push('<span class="tag tag-neutral">Doença Mental</span>');
+
+            document.getElementById('comorbidades').innerHTML = comorbidades.length > 0 ?
+                comorbidades.join(' ') : 'Nenhuma informada';
+
+            // Informações do sistema
+            document.getElementById('id').innerText = patient.id;
+            document.getElementById('ativo').innerHTML = patient.ativo ?
+                '<span class="tag tag-positive">Ativo</span>' :
+                '<span class="tag tag-negative">Inativo</span>';
+            document.getElementById('dataRegistro').innerText = formatDate(patient.dataRegistro);
+
+            // Mostrar conteúdo e ocultar carregamento
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('patient-info').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-message').innerText = error.message || 'Ocorreu um erro ao carregar os dados do paciente.';
+            document.getElementById('error-message').style.display = 'block';
+        });
+    });
+</script>
+</body>
+</html>

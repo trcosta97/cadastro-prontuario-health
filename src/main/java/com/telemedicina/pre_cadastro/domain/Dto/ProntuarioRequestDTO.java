@@ -8,6 +8,7 @@ public record ProntuarioRequestDTO(
         @NotNull
         Long pacienteId,
         String subjetivo,
+        String cdProntuario,
         String objetivo,
         String avaliacao,
         String plano,

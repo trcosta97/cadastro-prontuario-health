@@ -38,6 +38,10 @@
                 <label for="pacienteId" class="form-label">ID do Paciente</label>
                 <input type="number" class="form-control" id="pacienteId" required>
             </div>
+            <div class="mb-3">
+                <label for="cdProntuario" class="form-label">Código do Pronturário</label>
+                <input type="text" class="form-control" id="cdProntuario" required>
+            </div>
 
             <!-- Método SOAP -->
             <div class="mb-3">
@@ -86,7 +90,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="tuberculose">
                     <label class="form-check-label" for="tuberculose">
-                        Tuberculose
+                        Está com tuberculose
                     </label>
                 </div>
             </div>
@@ -95,7 +99,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="hanseniase">
                     <label class="form-check-label" for="hanseniase">
-                        Hanseníase
+                        Está com hanseníase
                     </label>
                 </div>
             </div>
@@ -125,6 +129,7 @@
 
         const prontuarioData = {
             pacienteId: document.getElementById('pacienteId').value,
+            cdProntuario: document.getElementById('cdProntuario').value,
             subjetivo: document.getElementById('subjetivo').value,
             objetivo: document.getElementById('objetivo').value,
             avaliacao: document.getElementById('avaliacao').value,

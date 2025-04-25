@@ -1,6 +1,7 @@
 package com.telemedicina.pre_cadastro.domain.Usuario.Enums;
 
 public enum Deficiencias {
+    NENHUMA("Nenhuma"),
     VISUAL("Visual"),
     AUDITIVA("Auditiva"),
     FISICA("Física"),

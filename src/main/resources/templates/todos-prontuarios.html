@@ -3,6 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <title>Todos os Prontuários</title>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f7f9fc;
+          margin: 0;
+          padding: 0;
+        }
+
+        h1 {
+          text-align: center;
+          margin: 2rem 0;
+          color: #2c3e50;
+        }
+
+        #lista-prontuarios {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0;
+          list-style: none;
+        }
+
+        #lista-prontuarios li {
+          background-color: #ffffff;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          padding: 1rem 1.5rem;
+          margin-bottom: 1rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #lista-prontuarios li:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+
+        strong {
+          color: #34495e;
+        }
+
+        a {
+          text-decoration: none;
+          color: #3498db;
+          margin-left: 1rem;
+          font-weight: bold;
+          transition: color 0.2s ease;
+        }
+
+        a:hover {
+          color: #1d6fa5;
+        }
+
+        @media (max-width: 600px) {
+          #lista-prontuarios li {
+            padding: 1rem;
+            font-size: 0.95rem;
+          }
+        }
+    </style>
 </head>
 <body>
 <h1>Prontuários</h1>
@@ -10,9 +69,6 @@
 
 <script>
     const token = localStorage.getItem("jwtToken");
-
-
-
 
     fetch("api/prontuarios/all", {
       headers: {
@@ -29,12 +85,11 @@
         const nomeMedico = prontuario.medico?.nomeCompleto || "(sem médico)";
         const cpfPaciente = prontuario.paciente?.cpf || "(sem CPF)";
 
-
         item.innerHTML = `
           <strong>ID:</strong> ${prontuario.id} -
           <strong>Paciente:</strong> ${nomePaciente} -
-          <strong>CPF:</strong> ${cpfPaciente} -
           <strong>Médico:</strong> ${nomeMedico} -
+          <strong>CPF:</strong> ${cpfPaciente} -
           <a href="prontuario/${prontuario.id || ''}">[Ver Detalhes]</a>
         `;
         lista.appendChild(item);

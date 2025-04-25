@@ -40,12 +40,16 @@
             <div class="col-md-6">
                 <a href="/novo-prontuario" class="btn btn-success btn-action w-100">Novo Prontuário</a>
             </div>
-            <div class="col-md-6">
-                <a href="/completar-cadastro" class="btn btn-success btn-action w-100">Completar Cadastro</a>
-            </div>
+<!--            <div class="col-md-6">-->
+<!--                <a href="/completar-cadastro" class="btn btn-success btn-action w-100">Completar Cadastro</a>-->
+<!--            </div>-->
             <div class="col-md-6">
                 <a href="/todos-prontuarios" class="btn btn-primary btn-action w-100">Prontuarios</a>
             </div>
+            <div class="col-md-6">
+                <a href="/todos-pacientes" class="btn btn-success btn-action w-100">Pacientes</a>
+            </div>
+
         </div>
     </div>
 </div>
@@ -55,14 +59,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         const token = localStorage.getItem('jwtToken');
         if (!token) {
-            window.location.href = '/login';
+            window.location.href = '/login-page';
         }
     });
 
     // Botão de logout
     document.getElementById('btn-logout').addEventListener('click', function() {
         localStorage.removeItem('jwtToken');
-        window.location.href = '/login';
+        window.location.href = '/login-page';
     });
 </script>
 </body>

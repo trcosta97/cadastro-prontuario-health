@@ -95,6 +95,7 @@
         <div class="mb-3">
             <label class="form-label">Deficiência</label>
             <select class="form-control" id="deficiencia">
+                <option value="NENHUMA">Nenhuma</option>
                 <option value="VISUAL">Visual</option>
                 <option value="AUDITIVA">Auditiva</option>
                 <option value="FISICA">Física</option>
@@ -143,22 +144,90 @@
         </div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="hanseniase">
-            <label class="form-check-label">Hanseníase</label>
+            <label class="form-check-label">Está com hanseníase</label>
         </div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="tuberculose">
-            <label class="form-check-label">Tuberculose</label>
+            <label class="form-check-label">Está com tuberculose</label>
         </div>
         <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" id="doencaMental">
-            <label class="form-check-label">Doença Mental</label>
+            <label class="form-check-label">Portador de transtorno mental</label>
         </div>
 
         <button type="submit" class="btn btn-primary">Atualizar Cadastro</button>
     </form>
 </div>
 
+
 <script>
+    // Função para obter parâmetros da URL
+    function getUrlParam(param) {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        return urlParams.get(param);
+    }
+
+    // Pegar o ID do paciente da URL
+    const pacienteId = getUrlParam('id');
+
+    // Se tiver ID, carregar os dados do paciente
+    if (pacienteId) {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            alert('Usuário não autenticado.');
+            window.location.href = '/login-page';
+        }
+
+        // Carregar os dados do paciente para preencher o formulário
+        fetch(`/api/paciente/${pacienteId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => res.json())
+        .then(paciente => {
+            // Preencher os campos do formulário com os dados existentes
+            // Campos de texto
+            document.getElementById('cns').value = paciente.cns || '';
+            document.getElementById('nomeSocial').value = paciente.nomeSocial || '';
+            document.getElementById('nomeMae').value = paciente.nomeMae || '';
+            document.getElementById('nomePai').value = paciente.nomePai || '';
+            document.getElementById('pisPasep').value = paciente.pisPasep || '';
+
+            // Campos select
+            if (paciente.raca) document.getElementById('raca').value = paciente.raca;
+            if (paciente.nacionalidade) document.getElementById('nacionalidade').value = paciente.nacionalidade;
+            if (paciente.situacaoMercadoDeTrabalho) document.getElementById('situacaoMercadoDeTrabalho').value = paciente.situacaoMercadoDeTrabalho;
+            if (paciente.orientacaoSexual) document.getElementById('orientacaoSexual').value = paciente.orientacaoSexual;
+            if (paciente.identidadeGenero) document.getElementById('identidadeGenero').value = paciente.identidadeGenero;
+            if (paciente.deficiencia) document.getElementById('deficiencia').value = paciente.deficiencia;
+
+            // Checkboxes
+            document.getElementById('temWhatsapp').checked = paciente.temWhatsapp || false;
+            document.getElementById('infoOrientacao').checked = paciente.infoOrientacao || false;
+            document.getElementById('infoIdentidadeGenero').checked = paciente.infoIdentidadeGenero || false;
+            document.getElementById('infoDeficiencia').checked = paciente.infoDeficiencia || false;
+            document.getElementById('planoSaude').checked = paciente.planoSaude || false;
+            document.getElementById('comunidadeTradicional').checked = paciente.comunidadeTradicional || false;
+            document.getElementById('menorQueDoisAnos').checked = paciente.menorQueDoisAnos || false;
+
+            // Comorbidades
+            document.getElementById('hipertensaoArterialSistemica').checked = paciente.hipertensaoArterialSistemica || false;
+            document.getElementById('diabetes').checked = paciente.diabetes || false;
+            document.getElementById('hanseniase').checked = paciente.hanseniase || false;
+            document.getElementById('tuberculose').checked = paciente.tuberculose || false;
+            document.getElementById('doencaMental').checked = paciente.doencaMental || false;
+        })
+        .catch(err => {
+            console.error("Erro ao carregar dados do paciente:", err);
+            alert("Erro ao carregar dados do paciente. Por favor, tente novamente.");
+        });
+    } else {
+        alert('ID do paciente não fornecido.');
+        window.location.href = '/todos-pacientes';
+    }
+
     document.getElementById('update-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -167,8 +236,6 @@
             alert('Usuário não autenticado.');
             return;
         }
-
-        const id = prompt("Digite o ID do paciente:"); // ou pegue via rota ou input oculto
 
         const data = {
             cns: document.getElementById('cns').value,
@@ -197,7 +264,7 @@
             ocupacoes: [] // você pode adicionar um campo para isso depois
         };
 
-        fetch(`http://localhost:8080/paciente/${id}`, {
+        fetch(`/api/paciente/${pacienteId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -211,7 +278,7 @@
         })
         .then(updated => {
             alert('Cadastro atualizado com sucesso!');
-            window.location.href = '/home';
+            window.location.href = '/todos-pacientes';
         })
         .catch(error => {
             console.error(error);

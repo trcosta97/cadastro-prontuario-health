@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Todos os Pacientes</title>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f7f9fc;
+          margin: 0;
+          padding: 0;
+        }
+
+        h1 {
+          text-align: center;
+          margin: 2rem 0;
+          color: #2c3e50;
+        }
+
+        #lista-pacientes {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0;
+          list-style: none;
+        }
+
+        #lista-pacientes li {
+          background-color: #ffffff;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          padding: 1rem 1.5rem;
+          margin-bottom: 1rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #lista-pacientes li:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+
+        strong {
+          color: #34495e;
+        }
+
+        a {
+          text-decoration: none;
+          color: #3498db;
+          margin-left: 1rem;
+          font-weight: bold;
+          transition: color 0.2s ease;
+        }
+
+        a:hover {
+          color: #1d6fa5;
+        }
+
+        .status-badge {
+          display: inline-block;
+          padding: 0.25rem 0.5rem;
+          border-radius: 999px;
+          font-size: 0.8rem;
+          font-weight: bold;
+          margin-left: 0.5rem;
+        }
+
+        .status-ativo {
+          background-color: #2ecc71;
+          color: white;
+        }
+
+        .status-inativo {
+          background-color: #e74c3c;
+          color: white;
+        }
+
+        .condições-saude {
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+          color: #7f8c8d;
+        }
+
+        @media (max-width: 600px) {
+          #lista-pacientes li {
+            padding: 1rem;
+            font-size: 0.95rem;
+          }
+        }
+    </style>
+</head>
+<body>
+<h1>Pacientes</h1>
+<ul id="lista-pacientes"></ul>
+
+<script>
+    const token = localStorage.getItem("jwtToken");
+
+    fetch("api/paciente/all", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      // console.log("Pacientes recebidos:", data);
+      const lista = document.getElementById("lista-pacientes");
+
+      if (data.length === 0) {
+        lista.innerHTML = "<li>Nenhum paciente encontrado.</li>";
+        return;
+      }
+
+      data.forEach(paciente => {
+        const item = document.createElement("li");
+
+        // Formatar data de nascimento
+        const dataNascimento = paciente.dataNascimento ? new Date(paciente.dataNascimento).toLocaleDateString('pt-BR') : '(sem data)';
+
+        // Determinar status do paciente
+        // const statusBadge = paciente.ativo
+        //  ? '<span class="status-badge status-ativo">Ativo</span>'
+        //  : '<span class="status-badge status-inativo">Inativo</span>';
+
+        // Formatar condições de saúde
+        const condicoesSaude = [];
+        if (paciente.hipertensaoArterialSistemica) condicoesSaude.push("Hipertensão");
+        if (paciente.diabetes) condicoesSaude.push("Diabetes");
+        if (paciente.hanseniase) condicoesSaude.push("Hanseníase");
+        if (paciente.tuberculose) condicoesSaude.push("Tuberculose");
+        if (paciente.doencaMental) condicoesSaude.push("Doença Mental");
+
+        const condicoesSaudeHtml = condicoesSaude.length > 0
+          ? `<div class="condições-saude"><strong>Condições de Saúde:</strong> ${condicoesSaude.join(", ")}</div>`
+          : '';
+
+        item.innerHTML = `
+          <strong>Nome:</strong> ${paciente.nomeCompleto || "(sem nome)"}<br>
+          <strong>CPF:</strong> ${paciente.cpf || "(sem CPF)"}<br>
+          <strong>Data de Nascimento:</strong> ${dataNascimento}<br>
+          <strong>Contato:</strong> ${paciente.celular || "(sem contato)"} ${paciente.temWhatsapp ? "(WhatsApp)" : ""}<br>
+          <strong>E-mail:</strong> ${paciente.email || "(sem e-mail)"}<br>
+          ${condicoesSaudeHtml}
+          <a href="paciente/${paciente.id || ''}">[Ver Detalhes]</a>
+          <a href="completar-cadastro?id=${paciente.id || ''}" class="ms-2">[Completar/Atualizar Cadastro]</a>
+        `;
+        lista.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("Erro ao buscar pacientes:", err);
+      document.getElementById("lista-pacientes").innerHTML = "<li>Erro ao carregar pacientes. Por favor, tente novamente.</li>";
+    });
+</script>
+</body>
+</html>

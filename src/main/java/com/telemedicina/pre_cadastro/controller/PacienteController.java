@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/paciente")
+@RequestMapping("api/paciente")
 public class PacienteController {
 
     @Autowired
@@ -33,6 +33,15 @@ public class PacienteController {
     public ResponseEntity<Paciente> update(@PathVariable Long id, @RequestBody UpdatePacienteRequestDTO data) {
         var updatedUsuario = service.update(id, data);
         return ResponseEntity.ok(updatedUsuario);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Paciente> get(@PathVariable Long id) {
+        var usuario = service.get(id);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
     }
 
 

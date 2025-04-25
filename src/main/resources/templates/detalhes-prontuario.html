@@ -3,19 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Detalhes do Prontuário</title>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f7f9fc;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        h1 {
+          margin: 2rem 0 1rem;
+          color: #2c3e50;
+        }
+
+        #detalhes-prontuario {
+          background-color: #ffffff;
+          padding: 2rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+          max-width: 600px;
+          width: 90%;
+          margin-bottom: 2rem;
+          color: #34495e;
+        }
+
+        #detalhes-prontuario p {
+          margin: 0.5rem 0;
+          line-height: 1.5;
+        }
+
+        strong {
+          color: #2d3436;
+        }
+
+        @media (max-width: 600px) {
+          #detalhes-prontuario {
+            padding: 1.5rem;
+          }
+
+          h1 {
+            font-size: 1.5rem;
+          }
+        }
+    </style>
 </head>
 <body>
 <h1>Detalhes do Prontuário</h1>
-<div id="detalhes-prontuario"></div>
+<div id="detalhes-prontuario">Carregando...</div>
 
 <script>
     const token = localStorage.getItem("jwtToken");
     const path = window.location.pathname;
     const id = path.substring(path.lastIndexOf('/') + 1);
-
-console.log("ID extraído do caminho:", id);
-
-    console.log("ID extraído:", id);
 
     fetch(`/api/prontuarios/${id}`, {
       headers: {
@@ -28,8 +70,6 @@ console.log("ID extraído do caminho:", id);
       return res.json();
     })
     .then(prontuario => {
-      console.log("Prontuário recebido:", prontuario);
-
       if (!prontuario) {
         document.getElementById("detalhes-prontuario").innerText = "Prontuário não encontrado.";
         return;
@@ -59,7 +99,6 @@ console.log("ID extraído do caminho:", id);
       document.getElementById("detalhes-prontuario").innerText = "Erro ao carregar prontuário.";
       console.error("Erro:", err);
     });
-
 </script>
 </body>
 </html>

@@ -3,9 +3,10 @@ package com.telemedicina.pre_cadastro.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
+//@RequestMapping("/paginas")
 public class PaginasController {
 
     @GetMapping("/login-page")  // Mudei para /login-page para evitar conflito com /login ou /token
@@ -25,7 +26,7 @@ public class PaginasController {
 
     @GetMapping("/novo-prontuario")
     public String novoProntuario() {
-        return "novo-prontuario";  // Renderiza o template 'novo-prontuario.html'
+        return "novo-prontuario";  // Renderiza o template 'novo-detalhes-prontuario.html'
     }
 
     @GetMapping("/completar-cadastro")
@@ -39,12 +40,27 @@ public class PaginasController {
             // Redirecionar para a lista de prontuários ou página de erro
             return "redirect:/todos-prontuarios";
         }
-        return "prontuario";
+        return "detalhes-prontuario";
     }
-
 
     @GetMapping("/todos-prontuarios")
     public String todosProntuarios() {
         return "todos-prontuarios";
     }
+
+    @GetMapping("/todos-pacientes")
+    public String todosPacientes() {
+        return "todos-pacientes";
+    }
+
+    @GetMapping("/paciente/{id}")
+    public String detalhesPaciente(@PathVariable Long id) {
+        return "detalhes-paciente";
+    }
+
+
+
+
+
+
 }

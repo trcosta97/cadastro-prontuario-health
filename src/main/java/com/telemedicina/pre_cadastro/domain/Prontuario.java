@@ -14,6 +14,9 @@ public class Prontuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "cd_prontario")
+    private String cdProntuario;
+
     @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
@@ -64,7 +67,7 @@ public class Prontuario {
                       String subjetivo, String objetivo, String avaliacao, String plano,
                       boolean hipertensaoArterialSistemica, boolean diabetes,
                       boolean tuberculose, boolean hanseniase,
-                      LocalDateTime dataCriacao, boolean ativo) {
+                      LocalDateTime dataCriacao, boolean ativo, String cdProntuario) {
         this.id = id;
         this.paciente = paciente;
         this.medico = medico;
@@ -78,6 +81,7 @@ public class Prontuario {
         this.tuberculose = tuberculose;
         this.hanseniase = hanseniase;
         this.dataCriacao = dataCriacao;
+        this.cdProntuario = cdProntuario;
         this.ativo = ativo;
     }
 
