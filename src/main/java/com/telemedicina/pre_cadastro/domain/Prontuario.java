@@ -1,6 +1,4 @@
 package com.telemedicina.pre_cadastro.domain;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import jakarta.persistence.*;
@@ -43,16 +41,25 @@ public class Prontuario {
 
     // Campos de comorbidades que podem ser atualizados pelo médico
     @Column(name = "hipertensao")
-    private boolean hipertensaoArterialSistemica;
+    private Boolean hipertensaoArterialSistemica;
 
     @Column(name = "diabetes")
-    private boolean diabetes;
+    private Boolean diabetes;
 
     @Column(name = "tuberculose")
-    private boolean tuberculose;
+    private Boolean tuberculose;
 
     @Column(name = "hanseniase")
-    private boolean hanseniase;
+    private Boolean hanseniase;
+
+    @Column(name = "gestante")
+    private Boolean gestante;
+
+    @Column(name = "puperpera")
+    private Boolean puperpera;
+
+    @Column(name = "saude_mental")
+    private Boolean saudeMental;
 
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
@@ -65,9 +72,9 @@ public class Prontuario {
 
     public Prontuario(Long id, Paciente paciente, Usuario medico, LocalDateTime dataAtendimento,
                       String subjetivo, String objetivo, String avaliacao, String plano,
-                      boolean hipertensaoArterialSistemica, boolean diabetes,
-                      boolean tuberculose, boolean hanseniase,
-                      LocalDateTime dataCriacao, boolean ativo, String cdProntuario) {
+                      Boolean hipertensaoArterialSistemica, Boolean diabetes, Boolean saudeMental,
+                      Boolean tuberculose, Boolean hanseniase, Boolean gestante, Boolean puperpera,
+                      LocalDateTime dataCriacao, Boolean ativo, String cdProntuario) {
         this.id = id;
         this.paciente = paciente;
         this.medico = medico;
@@ -169,35 +176,35 @@ public class Prontuario {
         this.plano = plano;
     }
 
-    public boolean isHipertensaoArterialSistemica() {
+    public Boolean isHipertensaoArterialSistemica() {
         return hipertensaoArterialSistemica;
     }
 
-    public void setHipertensaoArterialSistemica(boolean hipertensaoArterialSistemica) {
+    public void setHipertensaoArterialSistemica(Boolean hipertensaoArterialSistemica) {
         this.hipertensaoArterialSistemica = hipertensaoArterialSistemica;
     }
 
-    public boolean isDiabetes() {
+    public Boolean isDiabetes() {
         return diabetes;
     }
 
-    public void setDiabetes(boolean diabetes) {
+    public void setDiabetes(Boolean diabetes) {
         this.diabetes = diabetes;
     }
 
-    public boolean isTuberculose() {
+    public Boolean isTuberculose() {
         return tuberculose;
     }
 
-    public void setTuberculose(boolean tuberculose) {
+    public void setTuberculose(Boolean tuberculose) {
         this.tuberculose = tuberculose;
     }
 
-    public boolean isHanseniase() {
+    public Boolean isHanseniase() {
         return hanseniase;
     }
 
-    public void setHanseniase(boolean hanseniase) {
+    public void setHanseniase(Boolean hanseniase) {
         this.hanseniase = hanseniase;
     }
 
@@ -209,11 +216,44 @@ public class Prontuario {
         this.dataCriacao = dataCriacao;
     }
 
-    public boolean isAtivo() {
+    public Boolean isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public String getCdProntuario() {
+        return cdProntuario;
+    }
+
+
+    public void setCdProntuario(String cdProntuario) {
+        this.cdProntuario = cdProntuario;
+    }
+
+    public Boolean isGestante() {
+        return gestante;
+    }
+
+    public void setGestante(Boolean gestante) {
+        this.gestante = gestante;
+    }
+
+    public Boolean isPuperpera() {
+        return puperpera;
+    }
+
+    public void setPuperpera(Boolean puperpera) {
+        this.puperpera = puperpera;
+    }
+
+    public Boolean isSaudeMental() {
+        return saudeMental;
+    }
+
+    public void setSaudeMental(Boolean saudeMental) {
+        this.saudeMental = saudeMental;
     }
 }

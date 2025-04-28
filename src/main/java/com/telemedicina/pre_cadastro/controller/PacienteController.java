@@ -44,6 +44,15 @@ public class PacienteController {
         return ResponseEntity.ok(usuario);
     }
 
+    @GetMapping("cpf/{cpf}")
+    public ResponseEntity<Paciente> get(@PathVariable String cpf) {
+        var usuario = service.buscarPorCpf(cpf);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
+    }
+
 
 
     @GetMapping("/all")

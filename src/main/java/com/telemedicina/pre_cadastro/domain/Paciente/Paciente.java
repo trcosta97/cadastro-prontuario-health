@@ -28,7 +28,7 @@ public class Paciente {
     @Column(name = "whatsapp")
     private String celular;
     @Column(name="whatsappContactable")
-    private boolean temWhatsapp;
+    private Boolean temWhatsapp;
     private String email;
     @Column(name = "password")
     private String senha;
@@ -56,7 +56,7 @@ public class Paciente {
     private String nomePai;
     private String pisPasep;
     @Column(name="levelOfEducation")
-    private String grauDeInstrução;
+    private String grauDeInstrucao;
     @Enumerated(EnumType.STRING)
     @Column(name=" employmentStatus")
     private SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho;
@@ -64,40 +64,53 @@ public class Paciente {
     private List<String> ocupacoes;
     // Deu ou não info sobre orientação sexual
     @Column(name=" hasSexualOrientation")
-    private boolean infoOrientacao;
+    private Boolean infoOrientacao;
     @Enumerated(EnumType.STRING)
     @Column(name=" sexualOrientation")
     private OrientacoesSexuais orientacaoSexual;
     @Column(name=" hasGenderIdentity")
-    private boolean infoIdentidadeGenero;
+    private Boolean infoIdentidadeGenero;
     @Enumerated(EnumType.STRING)
     @Column(name=" genderIdentity")
     private IdentidadesGeneros identidadeGenero;
     @Column(name=" hasDisability")
-    private boolean infoDeficiencia;
+    private Boolean infoDeficiencia;
     @Enumerated(EnumType.STRING)
     @Column(name=" disability")
     private Deficiencias deficiencia;
     @Column(name=" hasHealthPlan")
-    private boolean planoSaude;
+    private Boolean planoSaude;
     //É membro de povo ou comunidade tradicional ou Campo, Floresta e Águas?
     @Column(name=" isTraditionalCommunity")
-    private boolean comunidadeTradicional;
+    private Boolean comunidadeTradicional;
     @Column(name=" isUnderTwoYearsOld")
-    private boolean menorQueDoisAnos;
+    private Boolean menorQueDoisAnos;
     @Column(name=" hasSystemicHypertension")
-    private boolean hipertensaoArterialSistemica;
+    private Boolean hipertensaoArterialSistemica;
     @Column(name=" hasDiabetes")
-    private boolean diabetes;
+    private Boolean diabetes;
     @Column(name=" hasLeprosy")
-    private boolean hanseniase;
+    private Boolean hanseniase;
     @Column(name=" hasTuberculosis")
-    private boolean tuberculose;
+    private Boolean tuberculose;
+    @Column(name = "gestante")
+    private Boolean gestante;
+    @Column(name = "puerperio")
+    private Boolean puerperio;
+    @Column(name = "saude_mental")
+    private Boolean saudeMental;
     // Teve diagnóstico de algum problema de saúde mental por algum profissional de saúde?  (Sim/Não)
     @PrimaryKeyJoinColumn(name=" hasMentalIllness")
-    private boolean doencaMental;
+    private Boolean transtornoMental;
 
-    public Paciente(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, String sexo, String celular, boolean temWhatsapp, String email, String senha, Endereco endereco, boolean ativo, LocalDateTime dataRegistro, String cns, Racas raca, String nomeSocial, TiposNacionalidade nacionalidade, String nomeMae, String nomePai, String pisPasep, String grauDeInstrução, SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho, List<String> ocupacoes, boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero, boolean infoDeficiencia, Deficiencias deficiencia, boolean planoSaude, boolean comunidadeTradicional, boolean menorQueDoisAnos, boolean hipertensaoArterialSistemica, boolean diabetes, boolean hanseniase, boolean tuberculose, boolean doencaMental) {
+    public Paciente(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, String sexo, String celular,
+                    Boolean temWhatsapp, String email, String senha, Endereco endereco, Boolean ativo, LocalDateTime dataRegistro,
+                    String cns, Racas raca, String nomeSocial, TiposNacionalidade nacionalidade, String nomeMae, String nomePai,
+                    String pisPasep, String grauDeInstrucao, SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho, List<String> ocupacoes,
+                    Boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, Boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero,
+                    Boolean infoDeficiencia, Deficiencias deficiencia, Boolean planoSaude, Boolean comunidadeTradicional, Boolean menorQueDoisAnos,
+                    Boolean hipertensaoArterialSistemica, Boolean diabetes, Boolean hanseniase, Boolean tuberculose, Boolean transtornoMental,
+                    Boolean puperpera, Boolean saudeMental, Boolean gestante) {
         this.id = id;
         this.cpf = cpf;
         this.nomeCompleto = nomeCompleto;
@@ -117,7 +130,7 @@ public class Paciente {
         this.nomeMae = nomeMae;
         this.nomePai = nomePai;
         this.pisPasep = pisPasep;
-        this.grauDeInstrução = grauDeInstrução;
+        this.grauDeInstrucao = grauDeInstrucao;
         this.situacaoMercadoDeTrabalho = situacaoMercadoDeTrabalho;
         this.ocupacoes = ocupacoes;
         this.infoOrientacao = infoOrientacao;
@@ -133,7 +146,10 @@ public class Paciente {
         this.diabetes = diabetes;
         this.hanseniase = hanseniase;
         this.tuberculose = tuberculose;
-        this.doencaMental = doencaMental;
+        this.transtornoMental = transtornoMental;
+        this.puerperio = puperpera;
+        this.saudeMental = saudeMental;
+        this.gestante = gestante;
     }
 
     public Paciente() {
@@ -148,6 +164,7 @@ public class Paciente {
         this.email = data.email();
         this.senha = data.senha();
         this.endereco = new Endereco(data.endereco());
+
     }
 
     public Long getId() {
@@ -174,7 +191,7 @@ public class Paciente {
         return celular;
     }
 
-    public boolean isTemWhatsapp() {
+    public Boolean isTemWhatsapp() {
         return temWhatsapp;
     }
 
@@ -190,7 +207,7 @@ public class Paciente {
         return endereco;
     }
 
-    public boolean isAtivo() {
+    public Boolean isAtivo() {
         return ativo;
     }
 
@@ -226,8 +243,8 @@ public class Paciente {
         return pisPasep;
     }
 
-    public String getGrauDeInstrução() {
-        return grauDeInstrução;
+    public String getGrauDeInstrucao() {
+        return grauDeInstrucao;
     }
 
     public SituacaoMercadoDeTrabalho getSituacaoMercadoDeTrabalho() {
@@ -238,7 +255,7 @@ public class Paciente {
         return ocupacoes;
     }
 
-    public boolean isInfoOrientacao() {
+    public Boolean isInfoOrientacao() {
         return infoOrientacao;
     }
 
@@ -246,7 +263,7 @@ public class Paciente {
         return orientacaoSexual;
     }
 
-    public boolean isInfoIdentidadeGenero() {
+    public Boolean isInfoIdentidadeGenero() {
         return infoIdentidadeGenero;
     }
 
@@ -254,7 +271,7 @@ public class Paciente {
         return identidadeGenero;
     }
 
-    public boolean isInfoDeficiencia() {
+    public Boolean isInfoDeficiencia() {
         return infoDeficiencia;
     }
 
@@ -262,36 +279,36 @@ public class Paciente {
         return deficiencia;
     }
 
-    public boolean isPlanoSaude() {
+    public Boolean isPlanoSaude() {
         return planoSaude;
     }
 
-    public boolean isComunidadeTradicional() {
+    public Boolean isComunidadeTradicional() {
         return comunidadeTradicional;
     }
 
-    public boolean isMenorQueDoisAnos() {
+    public Boolean isMenorQueDoisAnos() {
         return menorQueDoisAnos;
     }
 
-    public boolean isHipertensaoArterialSistemica() {
+    public Boolean isHipertensaoArterialSistemica() {
         return hipertensaoArterialSistemica;
     }
 
-    public boolean isDiabetes() {
+    public Boolean isDiabetes() {
         return diabetes;
     }
 
-    public boolean isHanseniase() {
+    public Boolean isHanseniase() {
         return hanseniase;
     }
 
-    public boolean isTuberculose() {
+    public Boolean isTuberculose() {
         return tuberculose;
     }
 
-    public boolean isDoencaMental() {
-        return doencaMental;
+    public Boolean isDoencaMental() {
+        return transtornoMental;
     }
 
     public void setId(Long id) {
@@ -318,7 +335,7 @@ public class Paciente {
         this.celular = celular;
     }
 
-    public void setTemWhatsapp(boolean temWhatsapp) {
+    public void setTemWhatsapp(Boolean temWhatsapp) {
         this.temWhatsapp = temWhatsapp;
     }
 
@@ -334,7 +351,7 @@ public class Paciente {
         this.endereco = endereco;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 
@@ -370,8 +387,8 @@ public class Paciente {
         this.pisPasep = pisPasep;
     }
 
-    public void setGrauDeInstrução(String grauDeInstrução) {
-        this.grauDeInstrução = grauDeInstrução;
+    public void setGrauDeInstrucao(String grauDeInstrucao) {
+        this.grauDeInstrucao = grauDeInstrucao;
     }
 
     public void setSituacaoMercadoDeTrabalho(SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho) {
@@ -382,7 +399,7 @@ public class Paciente {
         this.ocupacoes = ocupacoes;
     }
 
-    public void setInfoOrientacao(boolean infoOrientacao) {
+    public void setInfoOrientacao(Boolean infoOrientacao) {
         this.infoOrientacao = infoOrientacao;
     }
 
@@ -390,7 +407,7 @@ public class Paciente {
         this.orientacaoSexual = orientacaoSexual;
     }
 
-    public void setInfoIdentidadeGenero(boolean infoIdentidadeGenero) {
+    public void setInfoIdentidadeGenero(Boolean infoIdentidadeGenero) {
         this.infoIdentidadeGenero = infoIdentidadeGenero;
     }
 
@@ -398,7 +415,7 @@ public class Paciente {
         this.identidadeGenero = identidadeGenero;
     }
 
-    public void setInfoDeficiencia(boolean infoDeficiencia) {
+    public void setInfoDeficiencia(Boolean infoDeficiencia) {
         this.infoDeficiencia = infoDeficiencia;
     }
 
@@ -406,35 +423,47 @@ public class Paciente {
         this.deficiencia = deficiencia;
     }
 
-    public void setPlanoSaude(boolean planoSaude) {
+    public void setPlanoSaude(Boolean planoSaude) {
         this.planoSaude = planoSaude;
     }
 
-    public void setComunidadeTradicional(boolean comunidadeTradicional) {
+    public void setComunidadeTradicional(Boolean comunidadeTradicional) {
         this.comunidadeTradicional = comunidadeTradicional;
     }
 
-    public void setMenorQueDoisAnos(boolean menorQueDoisAnos) {
+    public void setMenorQueDoisAnos(Boolean menorQueDoisAnos) {
         this.menorQueDoisAnos = menorQueDoisAnos;
     }
 
-    public void setHipertensaoArterialSistemica(boolean hipertensaoArterialSistemica) {
+    public void setHipertensaoArterialSistemica(Boolean hipertensaoArterialSistemica) {
         this.hipertensaoArterialSistemica = hipertensaoArterialSistemica;
     }
 
-    public void setDiabetes(boolean diabetes) {
+    public void setDiabetes(Boolean diabetes) {
         this.diabetes = diabetes;
     }
 
-    public void setHanseniase(boolean hanseniase) {
+    public void setHanseniase(Boolean hanseniase) {
         this.hanseniase = hanseniase;
     }
 
-    public void setTuberculose(boolean tuberculose) {
+    public void setTuberculose(Boolean tuberculose) {
         this.tuberculose = tuberculose;
     }
 
-    public void setDoencaMental(boolean doencaMental) {
-        this.doencaMental = doencaMental;
+    public void setTranstornoMental(Boolean transtornoMental) {
+        this.transtornoMental = transtornoMental;
     }
+
+    public void setPuerperio(Boolean puerperio) {
+    }
+
+    public Boolean getGestante() {
+        return gestante;
+    }
+
+    public void setGestante(Boolean gestante) {
+        this.gestante = gestante;
+    }
+
 }

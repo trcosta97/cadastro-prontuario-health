@@ -2,14 +2,12 @@ package com.telemedicina.pre_cadastro.service;
 
 import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class PacienteService {
@@ -45,7 +43,7 @@ public class PacienteService {
         paciente.setNomePai(data.nomePai());
         paciente.setTemWhatsapp(data.temWhatsapp());
         paciente.setPisPasep(data.pisPasep());
-        paciente.setGrauDeInstrução(data.grauDeInstrucao());
+        paciente.setGrauDeInstrucao(data.grauDeInstrucao());
         paciente.setSituacaoMercadoDeTrabalho(data.situacaoMercadoDeTrabalho());
         paciente.setOcupacoes(data.ocupacoes());
         paciente.setInfoOrientacao(data.infoOrientacao());
@@ -61,7 +59,8 @@ public class PacienteService {
         paciente.setDiabetes(data.diabetes());
         paciente.setHanseniase(data.hanseniase());
         paciente.setTuberculose(data.tuberculose());
-        paciente.setDoencaMental(data.doencaMental());
+        paciente.setTranstornoMental(data.transtornoMental());
+        paciente.setPuerperio(data.puerperio());
 
         return repository.save(paciente);
     }
@@ -72,9 +71,16 @@ public class PacienteService {
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
     }
 
+    public Paciente buscarPorCpf(String cpf) {
+        return repository.findByCpf(cpf)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+    }
+
     public List<Paciente> buscarTodosAtivos() {
         return repository.findAllByAtivoTrue()
                 .orElseThrow(() -> new RuntimeException("Nenhum paciente ativo encontrado"));
     }
+
+
 
 }

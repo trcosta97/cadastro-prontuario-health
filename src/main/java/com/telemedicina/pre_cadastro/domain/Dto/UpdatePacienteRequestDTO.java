@@ -13,7 +13,7 @@ public record UpdatePacienteRequestDTO(
         Racas raca,
         @Size(max = 100, message = "O nome social deve ter no máximo 100 caracteres")
         String nomeSocial,
-        boolean temWhatsapp,
+        Boolean temWhatsapp,
         TiposNacionalidade nacionalidade,
         @Size(max = 100, message = "O nome da mãe deve ter no máximo 100 caracteres")
         String nomeMae,
@@ -26,19 +26,21 @@ public record UpdatePacienteRequestDTO(
         SituacaoMercadoDeTrabalho situacaoMercadoDeTrabalho,
         @Size(max = 5, message = "É possível selecionar até 5 ocupações")
         List<@Size(max = 100, message = "Cada ocupação pode ter no máximo 100 caracteres") String> ocupacoes,
-        boolean infoOrientacao,
+        Boolean infoOrientacao,
         OrientacoesSexuais orientacaoSexual,
-        boolean infoIdentidadeGenero,
+        Boolean infoIdentidadeGenero,
         IdentidadesGeneros identidadeGenero,
-        boolean infoDeficiencia,
+        Boolean infoDeficiencia,
         Deficiencias deficiencia,
-        boolean planoSaude,
-        boolean comunidadeTradicional,
-        boolean menorQueDoisAnos,
-        boolean hipertensaoArterialSistemica,
-        boolean diabetes,
-        boolean hanseniase,
-        boolean tuberculose,
-        boolean doencaMental
+        Boolean planoSaude,
+        Boolean comunidadeTradicional,
+        Boolean menorQueDoisAnos,
+        Boolean hipertensaoArterialSistemica,
+        Boolean diabetes,
+        Boolean hanseniase,
+        Boolean tuberculose,
+        Boolean transtornoMental,
+        Boolean puerperio,
+        Boolean gestante
 
 ) {}

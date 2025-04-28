@@ -51,22 +51,18 @@ public class ProntuarioService {
 
     @Transactional
     public Prontuario criarProntuario(ProntuarioRequestDTO dto, Long medicoId) {
-        Optional<Paciente> pacienteOpt = pacienteRepository.findById(dto.pacienteId());
-        if (pacienteOpt.isEmpty()) {
-            throw new NoSuchElementException("Paciente não encontrado com ID: " + dto.pacienteId());
-        }
-        Paciente paciente = pacienteOpt.get();
+        // 🔥 Buscar o paciente primeiro
+        Paciente paciente = pacienteRepository.findById(dto.pacienteId())
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + dto.pacienteId()));
 
-        Optional<Usuario> medicoOpt = usuarioRepository.findById(medicoId);
-        if (medicoOpt.isEmpty()) {
-            throw new NoSuchElementException("Médico não encontrado com ID: " + medicoId);
-        }
-        Usuario medico = medicoOpt.get();
+        Usuario medico = usuarioRepository.findById(medicoId)
+                .orElseThrow(() -> new RuntimeException("Médico não encontrado com ID: " + medicoId));
 
+        // ✅ Agora monta o prontuário
         Prontuario prontuario = new Prontuario();
         prontuario.setPaciente(paciente);
         prontuario.setMedico(medico);
-        prontuario.setDataAtendimento(LocalDateTime.now());
+        prontuario.setCdProntuario(dto.cdProntuario());
         prontuario.setSubjetivo(dto.subjetivo());
         prontuario.setObjetivo(dto.objetivo());
         prontuario.setAvaliacao(dto.avaliacao());
@@ -75,19 +71,23 @@ public class ProntuarioService {
         prontuario.setDiabetes(dto.diabetes());
         prontuario.setTuberculose(dto.tuberculose());
         prontuario.setHanseniase(dto.hanseniase());
+        prontuario.setGestante(dto.gestante());
+        prontuario.setPuperpera(dto.puperpera());
+        prontuario.setSaudeMental(dto.saudeMental());
+        prontuario.setDataAtendimento(LocalDateTime.now());
         prontuario.setDataCriacao(LocalDateTime.now());
         prontuario.setAtivo(true);
 
-        // Adicione logs aqui
-        System.out.println("Paciente encontrado: " + paciente);
-        System.out.println("Médico encontrado: " + medico);
-        System.out.println("Prontuário a ser salvo: " + prontuario);
-
+        // 🛠 Atualizar também o paciente com essas informações:
         paciente.setHipertensaoArterialSistemica(dto.hipertensaoArterialSistemica());
         paciente.setDiabetes(dto.diabetes());
         paciente.setTuberculose(dto.tuberculose());
         paciente.setHanseniase(dto.hanseniase());
+        paciente.setGestante(dto.gestante());
+        paciente.setPuerperio(dto.puperpera());
+        paciente.setTranstornoMental(dto.saudeMental());
         pacienteRepository.save(paciente);
+
         return prontuarioRepository.save(prontuario);
     }
 

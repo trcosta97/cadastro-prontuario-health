@@ -5,6 +5,7 @@ import com.telemedicina.pre_cadastro.domain.Prontuario;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
+import com.telemedicina.pre_cadastro.service.PacienteService;
 import com.telemedicina.pre_cadastro.service.ProntuarioService;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ProntuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PacienteService pacienteService;
 
     // Listar prontuários de um paciente específico
     @GetMapping("/paciente/{pacienteId}")
