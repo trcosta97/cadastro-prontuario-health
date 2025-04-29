@@ -38,7 +38,7 @@ public class Usuario {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
     @Column(name="enabled ")
-    private boolean ativo;
+    private boolean ativo = true;
     @Column(name="dateCreated ")
     private LocalDateTime dataRegistro;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

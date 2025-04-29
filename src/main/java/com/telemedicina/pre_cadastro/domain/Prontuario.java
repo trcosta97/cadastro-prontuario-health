@@ -64,8 +64,15 @@ public class Prontuario {
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
 
+    // Campos por perfil profissional
+    private String ciap;
+    private String cip;             // Para médicos
+    private String cipesc;          // Para enfermeiros
+    private String cidOdontologico; // Para dentistas
+
     @Column(name = "ativo")
     private boolean ativo;
+
 
     public Prontuario() {
     }
@@ -255,5 +262,69 @@ public class Prontuario {
 
     public void setSaudeMental(Boolean saudeMental) {
         this.saudeMental = saudeMental;
+    }
+
+    public Boolean getHipertensaoArterialSistemica() {
+        return hipertensaoArterialSistemica;
+    }
+
+    public Boolean getDiabetes() {
+        return diabetes;
+    }
+
+    public Boolean getTuberculose() {
+        return tuberculose;
+    }
+
+    public Boolean getHanseniase() {
+        return hanseniase;
+    }
+
+    public Boolean getGestante() {
+        return gestante;
+    }
+
+    public Boolean getPuperpera() {
+        return puperpera;
+    }
+
+    public Boolean getSaudeMental() {
+        return saudeMental;
+    }
+
+    public String getCiap() {
+        return ciap;
+    }
+
+    public void setCiap(String ciap) {
+        this.ciap = ciap;
+    }
+
+    public String getCip() {
+        return cip;
+    }
+
+    public void setCip(String cip) {
+        this.cip = cip;
+    }
+
+    public String getCipesc() {
+        return cipesc;
+    }
+
+    public void setCipesc(String cipesc) {
+        this.cipesc = cipesc;
+    }
+
+    public String getCidOdontologico() {
+        return cidOdontologico;
+    }
+
+    public void setCidOdontologico(String cidOdontologico) {
+        this.cidOdontologico = cidOdontologico;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

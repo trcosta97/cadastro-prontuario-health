@@ -34,8 +34,8 @@ public class UsuarioController {
 //        return ResponseEntity.ok(updatedUsuario);
 //    }
 
-    @PutMapping("/{userId}/{roleId}/role")
-    public ResponseEntity<Usuario> setRole(@PathVariable Long id, @PathVariable Long roleId) {
+    @PutMapping("/role")
+    public ResponseEntity<Usuario> setRole(@RequestParam Long id, @RequestParam Long roleId) {
         var updatedUsuario = service.setRole(id, roleId);
         return ResponseEntity.ok(updatedUsuario);
     }

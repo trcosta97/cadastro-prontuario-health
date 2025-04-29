@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ProntuarioRequestDTO(
-        @NotNull
-        Long pacienteId,
+        @NotNull Long pacienteId,
+        @NotBlank(message = "Código de prontuário não pode ser vazio") String cdProntuario,
         String subjetivo,
-        @NotBlank(message = "Código de prontuário não pode ser vazio")
-        String cdProntuario,
         String objetivo,
         String avaliacao,
         String plano,
@@ -18,6 +16,9 @@ public record ProntuarioRequestDTO(
         Boolean hanseniase,
         Boolean gestante,
         Boolean puperpera,
-        Boolean saudeMental
-) {
-}
+        Boolean saudeMental,
+        String ciap,
+        String cip,
+        String cipesc,
+        String cidOdontologico
+) {}

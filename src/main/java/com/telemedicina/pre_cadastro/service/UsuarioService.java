@@ -1,13 +1,16 @@
 package com.telemedicina.pre_cadastro.service;
 
 import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,10 +24,13 @@ public class UsuarioService {
     @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public Usuario save(Usuario usuario){
-        var newUsuario = repository.save(usuario);
+
+    public Usuario save(Usuario usuario) {
+        usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword()));
         return repository.save(usuario);
     }
 
@@ -33,20 +39,23 @@ public class UsuarioService {
         return optionalUsuario.orElse(null);
     }
 
-
     public Iterable<Usuario> getAll(){
         return repository.findAll();
     }
 
     public Usuario setRole(Long id, Long roleId) {
-        var usuario = repository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        var role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role não encontrada"));
+        Roles role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role não encontrada"));
 
-
-        usuario.setRole(Set.of(role));
+        Set<Roles> roles = new HashSet<>();
+        roles.add(role);
+        usuario.setRoles(roles); // Veja o próximo item também
         return repository.save(usuario);
     }
+
 
     public Usuario buscarPorEmail(String email) {
         return repository.findByEmail(email)

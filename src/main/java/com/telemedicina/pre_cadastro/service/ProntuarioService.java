@@ -50,47 +50,30 @@ public class ProntuarioService {
     }
 
     @Transactional
-    public Prontuario criarProntuario(ProntuarioRequestDTO dto, Long medicoId) {
-        // 🔥 Buscar o paciente primeiro
-        Paciente paciente = pacienteRepository.findById(dto.pacienteId())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + dto.pacienteId()));
+    public Prontuario criarProntuario(Long medicoId, Long pacienteId, String subjetivo, String objetivo, String avaliacao, String plano) {
+        Optional<Usuario> medicoOpt = usuarioRepository.findById(medicoId);
+        Optional<Paciente> pacienteOpt = pacienteRepository.findById(pacienteId);
 
-        Usuario medico = usuarioRepository.findById(medicoId)
-                .orElseThrow(() -> new RuntimeException("Médico não encontrado com ID: " + medicoId));
+        if (medicoOpt.isEmpty() || pacienteOpt.isEmpty()) {
+            throw new IllegalArgumentException("Médico ou paciente não encontrado.");
+        }
 
-        // ✅ Agora monta o prontuário
+        Usuario medico = medicoOpt.get();
+        Paciente paciente = pacienteOpt.get();
+
         Prontuario prontuario = new Prontuario();
-        prontuario.setPaciente(paciente);
         prontuario.setMedico(medico);
-        prontuario.setCdProntuario(dto.cdProntuario());
-        prontuario.setSubjetivo(dto.subjetivo());
-        prontuario.setObjetivo(dto.objetivo());
-        prontuario.setAvaliacao(dto.avaliacao());
-        prontuario.setPlano(dto.plano());
-        prontuario.setHipertensaoArterialSistemica(dto.hipertensaoArterialSistemica());
-        prontuario.setDiabetes(dto.diabetes());
-        prontuario.setTuberculose(dto.tuberculose());
-        prontuario.setHanseniase(dto.hanseniase());
-        prontuario.setGestante(dto.gestante());
-        prontuario.setPuperpera(dto.puperpera());
-        prontuario.setSaudeMental(dto.saudeMental());
+        prontuario.setPaciente(paciente);
         prontuario.setDataAtendimento(LocalDateTime.now());
+        prontuario.setSubjetivo(subjetivo);
+        prontuario.setObjetivo(objetivo);
+        prontuario.setAvaliacao(avaliacao);
+        prontuario.setPlano(plano);
         prontuario.setDataCriacao(LocalDateTime.now());
-        prontuario.setAtivo(true);
-
-        // 🛠 Atualizar também o paciente com essas informações:
-        paciente.setHipertensaoArterialSistemica(dto.hipertensaoArterialSistemica());
-        paciente.setDiabetes(dto.diabetes());
-        paciente.setTuberculose(dto.tuberculose());
-        paciente.setHanseniase(dto.hanseniase());
-        paciente.setGestante(dto.gestante());
-        paciente.setPuerperio(dto.puperpera());
-        paciente.setTranstornoMental(dto.saudeMental());
-        pacienteRepository.save(paciente);
+        prontuario.setAtivo(true);  // Se for necessário, ajuste para ser verdadeiro por padrão
 
         return prontuarioRepository.save(prontuario);
     }
-
     @Transactional
     public Prontuario atualizarProntuario(Long id, ProntuarioRequestDTO dto) {
         Prontuario prontuario = buscarProntuario(id);

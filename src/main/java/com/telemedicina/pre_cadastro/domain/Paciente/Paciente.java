@@ -37,7 +37,7 @@ public class Paciente {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
     @Column(name="enabled ")
-    private boolean ativo;
+    private boolean ativo = true;
     @Column(name="dateCreated ")
     private LocalDateTime dataRegistro;
     // Campos de cadastro completo

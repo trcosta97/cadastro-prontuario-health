@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualização de Prontuário</title>
+    <title>Prontuário</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Atualização de Prontuário</h2>
+    <h2>Prontuário</h2>
 
     <!-- Campo de Busca por CPF -->
     <div class="form-group">
@@ -43,10 +43,74 @@
             <label for="objetivo">Objetivo</label>
             <textarea class="form-control" id="objetivo" rows="3"></textarea>
         </div>
+
+        <!-- Avaliação com campos específicos por perfil profissional -->
         <div class="form-group mt-3">
-            <label for="avaliacao">Avaliação</label>
+            <label for="avaliacao">Avaliação (Hipótese Diagnóstica)</label>
             <textarea class="form-control" id="avaliacao" rows="3"></textarea>
+
+            <!-- Seleção do perfil profissional -->
+            <div class="form-group mt-2">
+                <label>Perfil Profissional:</label>
+                <select class="form-select" id="perfilProfissional" onchange="atualizarCamposAvaliacao()">
+                    <option value="">Selecione o perfil</option>
+                    <option value="MEDICO">Médico(a)</option>
+                    <option value="ENFERMEIRO">Enfermeiro(a)</option>
+                    <option value="DENTISTA">Dentista</option>
+                    <option value="MULTIDISCIPLINAR">Equipe Multidisciplinar</option>
+                </select>
+            </div>
+
+            <!-- Campos específicos para cada perfil (inicialmente ocultos) -->
+            <div id="camposMedico" class="mt-2" style="display:none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="ciap">CIAP (Classificação Internacional da Atenção Primária)*</label>
+                        <input type="text" class="form-control" id="ciap">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cip">CIP (Classificação Internacional de Procedimentos)*</label>
+                        <input type="text" class="form-control" id="cip">
+                    </div>
+                </div>
+            </div>
+
+            <div id="camposEnfermeiro" class="mt-2" style="display:none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="ciapEnfermeiro">CIAP (Classificação Internacional da Atenção Primária)*</label>
+                        <input type="text" class="form-control" id="ciapEnfermeiro">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cipesc">CIPESC (Classificação Internacional das Práticas de Enfermagem em Saúde Coletiva)*</label>
+                        <input type="text" class="form-control" id="cipesc">
+                    </div>
+                </div>
+            </div>
+
+            <div id="camposDentista" class="mt-2" style="display:none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="ciapDentista">CIAP (Classificação Internacional da Atenção Primária)*</label>
+                        <input type="text" class="form-control" id="ciapDentista">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cidOdontologico">CID Odontológico*</label>
+                        <input type="text" class="form-control" id="cidOdontologico">
+                    </div>
+                </div>
+            </div>
+
+            <div id="camposMultidisciplinar" class="mt-2" style="display:none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="ciapMulti">CIAP (Classificação Internacional da Atenção Primária)*</label>
+                        <input type="text" class="form-control" id="ciapMulti">
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="form-group mt-3">
             <label for="plano">Plano</label>
             <textarea class="form-control" id="plano" rows="3"></textarea>
@@ -95,6 +159,27 @@
 </div>
 
 <script>
+    function atualizarCamposAvaliacao() {
+        const perfil = document.getElementById('perfilProfissional').value;
+
+        // Ocultar todos os campos específicos
+        document.getElementById('camposMedico').style.display = 'none';
+        document.getElementById('camposEnfermeiro').style.display = 'none';
+        document.getElementById('camposDentista').style.display = 'none';
+        document.getElementById('camposMultidisciplinar').style.display = 'none';
+
+        // Mostrar os campos específicos para o perfil selecionado
+        if (perfil === 'MEDICO') {
+            document.getElementById('camposMedico').style.display = 'block';
+        } else if (perfil === 'ENFERMEIRO') {
+            document.getElementById('camposEnfermeiro').style.display = 'block';
+        } else if (perfil === 'DENTISTA') {
+            document.getElementById('camposDentista').style.display = 'block';
+        } else if (perfil === 'MULTIDISCIPLINAR') {
+            document.getElementById('camposMultidisciplinar').style.display = 'block';
+        }
+    }
+
     function buscarPaciente() {
         const cpf = document.getElementById('cpf').value;
         if (!cpf) {
@@ -136,9 +221,47 @@
 
             document.getElementById('dadosPaciente').style.display = 'block';
             document.getElementById('prontuarioForm').style.display = 'block';
+
+            // Verificar o perfil do usuário logado e preencher automaticamente
+            verificarPerfilUsuario(token);
         })
         .catch(err => {
             alert(err.message);
+        });
+    }
+
+    function verificarPerfilUsuario(token) {
+        fetch(`http://localhost:8080/api/usuario/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao obter informações do usuário');
+            return res.json();
+        })
+        .then(data => {
+            // Verificar roles do usuário e selecionar o perfil correspondente
+            if (data.roles) {
+                const roles = data.roles.map(role => role.name);
+
+                if (roles.includes('MEDICO')) {
+                    document.getElementById('perfilProfissional').value = 'MEDICO';
+                } else if (roles.includes('ENFERMEIRO')) {
+                    document.getElementById('perfilProfissional').value = 'ENFERMEIRO';
+                } else if (roles.includes('DENTISTA')) {
+                    document.getElementById('perfilProfissional').value = 'DENTISTA';
+                } else if (roles.includes('EQUIPE_MULTIDICIPLINAR')) {
+                    document.getElementById('perfilProfissional').value = 'MULTIDISCIPLINAR';
+                }
+
+                // Atualizar campos visíveis
+                atualizarCamposAvaliacao();
+            }
+        })
+        .catch(err => {
+            console.error('Erro ao obter perfil do usuário:', err);
         });
     }
 
@@ -146,6 +269,58 @@
         e.preventDefault();
         const token = localStorage.getItem('jwtToken');
         const pacienteId = document.getElementById('pacienteId').value;
+        const perfil = document.getElementById('perfilProfissional').value;
+
+        if (!perfil) {
+            alert('Selecione seu perfil profissional para continuar.');
+            return;
+        }
+
+        // Validar campos obrigatórios de acordo com o perfil
+        let camposValidos = true;
+
+        if (perfil === 'MEDICO') {
+            if (!document.getElementById('ciap').value || !document.getElementById('cip').value) {
+                alert('Os campos CIAP e CIP são obrigatórios para médicos.');
+                camposValidos = false;
+            }
+        } else if (perfil === 'ENFERMEIRO') {
+            if (!document.getElementById('ciapEnfermeiro').value || !document.getElementById('cipesc').value) {
+                alert('Os campos CIAP e CIPESC são obrigatórios para enfermeiros.');
+                camposValidos = false;
+            }
+        } else if (perfil === 'DENTISTA') {
+            if (!document.getElementById('ciapDentista').value || !document.getElementById('cidOdontologico').value) {
+                alert('Os campos CIAP e CID Odontológico são obrigatórios para dentistas.');
+                camposValidos = false;
+            }
+        } else if (perfil === 'MULTIDISCIPLINAR') {
+            if (!document.getElementById('ciapMulti').value) {
+                alert('O campo CIAP é obrigatório para profissionais da equipe multidisciplinar.');
+                camposValidos = false;
+            }
+        }
+
+        if (!camposValidos) return;
+
+        // Preparar os valores específicos conforme o perfil selecionado
+        let ciapValue = '';
+        let cipValue = '';
+        let cipescValue = '';
+        let cidOdontologicoValue = '';
+
+        if (perfil === 'MEDICO') {
+            ciapValue = document.getElementById('ciap').value;
+            cipValue = document.getElementById('cip').value;
+        } else if (perfil === 'ENFERMEIRO') {
+            ciapValue = document.getElementById('ciapEnfermeiro').value;
+            cipescValue = document.getElementById('cipesc').value;
+        } else if (perfil === 'DENTISTA') {
+            ciapValue = document.getElementById('ciapDentista').value;
+            cidOdontologicoValue = document.getElementById('cidOdontologico').value;
+        } else if (perfil === 'MULTIDISCIPLINAR') {
+            ciapValue = document.getElementById('ciapMulti').value;
+        }
 
         const prontuarioData = {
             pacienteId: +pacienteId,
@@ -160,7 +335,11 @@
             hanseniase: document.getElementById('hanseniase').checked,
             gestante: document.getElementById('gestante').checked,
             puperpera: document.getElementById('puerpera').checked,
-            saudeMental: document.getElementById('saudeMental').checked
+            saudeMental: document.getElementById('saudeMental').checked,
+            ciap: ciapValue,
+            cip: cipValue,
+            cipesc: cipescValue,
+            cidOdontologico: cidOdontologicoValue
         };
 
         fetch('http://localhost:8080/api/prontuarios', {

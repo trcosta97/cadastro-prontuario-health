@@ -2,12 +2,14 @@ package com.telemedicina.pre_cadastro.controller;
 
 import com.telemedicina.pre_cadastro.domain.Dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
+import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import com.telemedicina.pre_cadastro.service.PacienteService;
 import com.telemedicina.pre_cadastro.service.ProntuarioService;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -61,44 +63,41 @@ public class ProntuarioController {
     }
 
     @PostMapping
-    public ResponseEntity criarProntuario(@RequestBody ProntuarioRequestDTO dto, Authentication authentication) {
+    public ResponseEntity<?> criarProntuario(@RequestBody ProntuarioRequestDTO dto, Authentication authentication) {
         try {
-            // Verificar se a autenticação existe
             if (authentication == null || !authentication.isAuthenticated()) {
-                System.err.println("Usuário não autenticado!");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            // Obter o ID do médico logado do Principal (assumindo que o subject do JWT é o ID)
-            String medicoIdString = authentication.getName();
-            Long medicoId = Long.parseLong(medicoIdString);
-//            System.out.println("ID do médico logado: " + medicoId);
+            Long usuarioId = Long.parseLong(authentication.getName());
+            Usuario medico = usuarioRepository.findById(usuarioId)
+                    .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
 
-            Optional<Usuario> medicoOpt = usuarioRepository.findById(medicoId);
-            if (medicoOpt.isEmpty()) {
-                System.err.println("Médico não encontrado com ID: " + medicoId);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Médico não encontrado");
-            }
-            Usuario medicoLogado = medicoOpt.get();
+            // Montando prefixo baseado no tipo de profissional
+            String prefixoAvaliacao = medico.getRoles().stream()
+                    .map(Roles::getName)
+                    .map(String::toUpperCase)
+                    .filter(role -> List.of("MEDICO", "ENFERMEIRO", "DENTISTA", "EQUIPE_MULTIDICIPLINAR").contains(role))
+                    .map(role -> switch (role) {
+                        case "MEDICO" -> "[Médico] ";
+                        case "ENFERMEIRO" -> "[Enfermeiro] ";
+                        case "DENTISTA" -> "[Dentista] ";
+                        case "EQUIPE_MULTIDICIPLINAR" -> "[Equipe Multiprofissional] ";
+                        default -> "";
+                    })
+                    .findFirst()
+                    .orElse("[Outro Profissional] ");
 
-//            System.out.println("DTO recebido: " + dto);
-//            System.out.println("Médico logado: " + medicoLogado);
+            String avaliacaoFinal = prefixoAvaliacao + (dto.avaliacao() == null ? "" : dto.avaliacao());
 
-            Prontuario novoProntuario = prontuarioService.criarProntuario(dto, medicoLogado.getId());
-            return new ResponseEntity<>(novoProntuario, HttpStatus.CREATED);
-        } catch (NumberFormatException e) {
-            System.err.println("Erro ao converter ID do médico: " + e.getMessage());
-            return ResponseEntity.badRequest().body("ID do médico inválido");
-        } catch (NoSuchElementException e) {
-            System.err.println("Usuário não encontrado: " + e.getMessage());
-            return ResponseEntity.notFound().build();
+            Prontuario prontuario = prontuarioService.criarProntuario(usuarioId, dto.pacienteId(), dto.subjetivo(), dto.objetivo(), avaliacaoFinal, dto.plano());
+            return new ResponseEntity<>(prontuario, HttpStatus.CREATED);
+
         } catch (Exception e) {
-            System.err.println("Erro ao criar prontuário: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Erro ao criar prontuário");
         }
     }
-
     // Atualizar prontuário existente
     @PutMapping("/{id}")
     public ResponseEntity<Prontuario> atualizarProntuario(@PathVariable Long id, @RequestBody ProntuarioRequestDTO dto) {

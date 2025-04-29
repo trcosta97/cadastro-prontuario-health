@@ -39,7 +39,8 @@ public class Roles {
         MEDICO(7L),
         ENFERMEIRO(8L),
         EQUIPE_ENFERMAGEM(9L),
-        EQUIPE_MULTIDICIPLINAR(10L);
+        EQUIPE_MULTIDICIPLINAR(10L),
+        DENTISTA(11L);
 
         long roleId;
 
