@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

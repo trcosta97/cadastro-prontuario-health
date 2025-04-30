@@ -3,7 +3,7 @@ package com.telemedicina.pre_cadastro.domain.Paciente;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.telemedicina.pre_cadastro.domain.Dto.PreSavePacienteRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Endereco;
-import com.telemedicina.pre_cadastro.domain.Usuario.Enums.*;
+import com.telemedicina.pre_cadastro.domain.Paciente.Enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 

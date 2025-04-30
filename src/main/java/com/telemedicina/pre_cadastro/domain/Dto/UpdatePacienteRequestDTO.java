@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.domain.Dto;
 
-import com.telemedicina.pre_cadastro.domain.Usuario.Enums.*;
+import com.telemedicina.pre_cadastro.domain.Paciente.Enums.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 

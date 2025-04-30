@@ -2,14 +2,13 @@ package com.telemedicina.pre_cadastro.controller;
 
 import com.telemedicina.pre_cadastro.domain.Dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
-import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import com.telemedicina.pre_cadastro.service.PacienteService;
 import com.telemedicina.pre_cadastro.service.ProntuarioService;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/prontuarios")

@@ -1,10 +1,8 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Usuario.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
-import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

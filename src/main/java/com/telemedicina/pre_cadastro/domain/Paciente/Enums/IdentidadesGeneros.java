@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Usuario.Enums;
+package com.telemedicina.pre_cadastro.domain.Paciente.Enums;
 
 public enum IdentidadesGeneros {
 
