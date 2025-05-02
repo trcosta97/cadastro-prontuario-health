@@ -58,6 +58,14 @@ public class PaginasController {
         return "detalhes-paciente";
     }
 
+    @GetMapping("/novo-agendamento")
+    public String novoAgendamento() {return "novo-agendamento"; }
+
+    @GetMapping("/listar-agendamento")
+    public String listarAgendamento() {
+        return "listar-agendamentos";
+    }
+
 
 
 

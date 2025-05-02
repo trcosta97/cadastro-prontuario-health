@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamentos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+        }
+        .agendamento-item {
+            border-left: 4px solid #007bff;
+            transition: all 0.3s;
+        }
+        .agendamento-item:hover {
+            background-color: #f1f8ff;
+            transform: translateX(5px);
+        }
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            color: #c5c5c5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header text-center">
+    <h1>Sistema de Agendamento Médico</h1>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Consultar Agendamentos</h3>
+                </div>
+                <div class="card-body">
+                    <form id="consultaForm" class="mb-4">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="tipoConsulta" class="form-label">Consultar por:</label>
+                                <select class="form-select" id="tipoConsulta" required>
+                                    <option value="paciente">CPF do Paciente</option>
+                                    <option value="medico">CPF do Médico</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="cpfConsulta" class="form-label">CPF:</label>
+                                <input type="text" class="form-control" id="cpfConsulta" placeholder="000.000.000-00" required>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search me-1"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="loadingSpinner" class="d-flex justify-content-center my-5 d-none">
+                        <div class="spinner-border loading-spinner text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+
+                    <div id="emptyState" class="empty-state d-none">
+                        <i class="bi bi-calendar-x"></i>
+                        <h4>Nenhum agendamento encontrado</h4>
+                        <p class="text-muted">Tente outro CPF ou verifique os dados informados.</p>
+                    </div>
+
+                    <div id="agendamentosLista" class="d-none">
+                        <h4 class="mb-3">Agendamentos encontrados:</h4>
+                        <div id="agendamentosContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="/novo-agendamento" class="btn btn-success">Novo Agendamento</a>
+                <a href="/home" class="btn btn-secondary">Voltar para Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Agendamento -->
+<div class="modal fade" id="detalheModal" tabindex="-1" aria-labelledby="detalheModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detalheModalLabel">Detalhes do Agendamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6>Informações do Agendamento</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>ID:</span>
+                                <span id="modal-id"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Data e Hora:</span>
+                                <span id="modal-dataHora"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Status:</span>
+                                <span id="modal-status"></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6>Paciente</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Nome:</span>
+                                <span id="modal-paciente-nome"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>CPF:</span>
+                                <span id="modal-paciente-cpf"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Contato:</span>
+                                <span id="modal-paciente-contato"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6>Médico</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Nome:</span>
+                                <span id="modal-medico-nome"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>CPF:</span>
+                                <span id="modal-medico-cpf"></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6>Observações</h6>
+                        <div class="card">
+                            <div class="card-body" id="modal-observacao">
+                                Sem observações
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-danger" id="btnCancelar">Cancelar Agendamento</button>
+                <button type="button" class="btn btn-success" id="btnConfirmar">Confirmar Agendamento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Máscara para o campo CPF
+        $('#cpfConsulta').mask('000.000.000-00');
+
+        // Manipula o envio do formulário de consulta
+        document.getElementById('consultaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Mostrar spinner de carregamento
+            document.getElementById('loadingSpinner').classList.remove('d-none');
+            document.getElementById('agendamentosLista').classList.add('d-none');
+            document.getElementById('emptyState').classList.add('d-none');
+
+            const tipoConsulta = document.getElementById('tipoConsulta').value;
+            const cpf = document.getElementById('cpfConsulta').value.replace(/[^\d]/g, '');
+
+            // Construir a URL de consulta correta
+            let url = `/api/agendamento/${tipoConsulta}/${cpf}`;
+
+            // Obter o token do localStorage
+            const token = localStorage.getItem('jwtToken');
+
+            if (!token) {
+                alert('Você não está autenticado. Faça login novamente.');
+                window.location.href = '/login-page';
+                return;
+            }
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar agendamentos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('loadingSpinner').classList.add('d-none');
+
+                if (data && data.length > 0) {
+                    renderizarAgendamentos(data);
+                    document.getElementById('agendamentosLista').classList.remove('d-none');
+                } else {
+                    document.getElementById('emptyState').classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                document.getElementById('loadingSpinner').classList.add('d-none');
+                document.getElementById('emptyState').classList.remove('d-none');
+            });
+        });
+
+        // Modal de detalhes
+        const detalheModal = new bootstrap.Modal(document.getElementById('detalheModal'));
+
+        // Botões de ação do modal
+        document.getElementById('btnCancelar').addEventListener('click', function() {
+            atualizarStatusAgendamento(
+                document.getElementById('modal-id').textContent,
+                'CANCELADO'
+            );
+        });
+
+        document.getElementById('btnConfirmar').addEventListener('click', function() {
+            atualizarStatusAgendamento(
+                document.getElementById('modal-id').textContent,
+                'CONFIRMADO'
+            );
+        });
+    });
+
+    function renderizarAgendamentos(agendamentos) {
+        const container = document.getElementById('agendamentosContainer');
+        container.innerHTML = '';
+
+        agendamentos.forEach(agendamento => {
+            // Formatação da data
+            const dataHora = new Date(agendamento.dataHora);
+            const dataFormatada = dataHora.toLocaleDateString('pt-BR');
+            const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            // Determina a cor do status
+            let statusClass = 'bg-primary';
+            switch(agendamento.statusAgendamento) {
+                case 'CONFIRMADO':
+                    statusClass = 'bg-success';
+                    break;
+                case 'CANCELADO':
+                    statusClass = 'bg-danger';
+                    break;
+                case 'REALIZADO':
+                    statusClass = 'bg-info';
+                    break;
+                case 'AUSENTE':
+                    statusClass = 'bg-warning';
+                    break;
+            }
+
+            const agendamentoHtml = `
+                <div class="card mb-3 agendamento-item" data-id="${agendamento.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="bi bi-calendar-check fs-1 text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Data</div>
+                                        <strong>${dataFormatada}</strong>
+                                        <div class="text-muted">${horaFormatada}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-muted small">Paciente</div>
+                                <strong>${agendamento.paciente.nomeCompleto}</strong>
+                                <div class="text-muted small">CPF: ${formatarCPF(agendamento.paciente.cpf)}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-muted small">Médico</div>
+                                <strong>${agendamento.medico.nomeCompleto}</strong>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <span class="badge ${statusClass} status-badge mb-2">${agendamento.statusAgendamento}</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="abrirDetalhes(${JSON.stringify(agendamento).replace(/"/g, '&quot;')})">
+                                    <i class="bi bi-eye"></i> Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += agendamentoHtml;
+        });
+    }
+
+    function formatarCPF(cpf) {
+        if (!cpf) return '';
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+
+    function formatarTelefone(telefone) {
+        if (!telefone) return '';
+        return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+
+    function abrirDetalhes(agendamento) {
+        // Formatação da data para exibição
+        const dataHora = new Date(agendamento.dataHora);
+        const dataHoraFormatada = dataHora.toLocaleDateString('pt-BR') + ' ' +
+                                dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+        // Preencher o modal com os dados do agendamento
+        document.getElementById('modal-id').textContent = agendamento.id;
+        document.getElementById('modal-dataHora').textContent = dataHoraFormatada;
+        document.getElementById('modal-status').textContent = agendamento.statusAgendamento;
+
+        document.getElementById('modal-paciente-nome').textContent = agendamento.paciente.nomeCompleto;
+        document.getElementById('modal-paciente-cpf').textContent = formatarCPF(agendamento.paciente.cpf);
+        document.getElementById('modal-paciente-contato').textContent = formatarTelefone(agendamento.paciente.celular);
+
+        document.getElementById('modal-medico-nome').textContent = agendamento.medico.nomeCompleto;
+        document.getElementById('modal-medico-cpf').textContent = formatarCPF(agendamento.medico.cpf);
+
+        document.getElementById('modal-observacao').textContent = agendamento.observacao || 'Sem observações';
+
+        // Habilitar/desabilitar botões conforme o status atual
+        const btnCancelar = document.getElementById('btnCancelar');
+        const btnConfirmar = document.getElementById('btnConfirmar');
+
+        if (agendamento.statusAgendamento === 'CANCELADO' ||
+            agendamento.statusAgendamento === 'REALIZADO' ||
+            agendamento.statusAgendamento === 'AUSENTE') {
+            btnCancelar.disabled = true;
+            btnConfirmar.disabled = true;
+        } else {
+            btnCancelar.disabled = false;
+            btnConfirmar.disabled = (agendamento.statusAgendamento === 'CONFIRMADO');
+        }
+
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('detalheModal'));
+        modal.show();
+    }
+
+    function atualizarStatusAgendamento(id, novoStatus) {
+        if (!id || !novoStatus) return;
+
+        alert('Funcionalidade de atualização de status não está disponível no backend. Status desejado: ' + novoStatus);
+
+        // Fechar o modal após a mensagem
+        const modal = bootstrap.Modal.getInstance(document.getElementById('detalheModal'));
+        modal.hide();
+
+        // Nota: A implementação real deveria ser assim quando o endpoint estiver disponível:
+        /*
+        const token = localStorage.getItem('jwtToken');
+
+        if (!token) {
+            alert('Você não está autenticado. Faça login novamente.');
+            window.location.href = '/login-page';
+            return;
+        }
+
+        fetch(`/api/agendamento/${id}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+                statusAgendamento: novoStatus
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao atualizar status');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Fechar o modal após atualização bem-sucedida
+            const modal = bootstrap.Modal.getInstance(document.getElementById('detalheModal'));
+            modal.hide();
+
+            // Recarregar os agendamentos (simular um novo clique no botão buscar)
+            document.getElementById('consultaForm').dispatchEvent(new Event('submit'));
+
+            alert(`Agendamento ${novoStatus.toLowerCase()} com sucesso!`);
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao atualizar status do agendamento.');
+        });
+        */
+    }
+</script>
+
+</body>
+</html>

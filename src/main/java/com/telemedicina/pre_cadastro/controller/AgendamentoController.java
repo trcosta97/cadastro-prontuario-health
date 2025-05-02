@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/agendamento")
 public class AgendamentoController {
@@ -24,8 +27,8 @@ public class AgendamentoController {
         return ResponseEntity.created(uri).body(newAgendamento);
     }
 
-    @GetMapping("medico/{cpf}")
-    public ResponseEntity<Agendamento> getAgendamentoByMedico(@PathVariable String cpf) {
+    @GetMapping("/medico/{cpf}")
+    public ResponseEntity<List<Agendamento>> getAgendamentoByMedico(@RequestParam String cpf) {
         var agendamento = agendamentoService.getByMedicoCpf(cpf);
         if (agendamento == null) {
             return ResponseEntity.notFound().build();
@@ -33,12 +36,22 @@ public class AgendamentoController {
         return ResponseEntity.ok(agendamento);
     }
 
-    @GetMapping("paciente/{cpf}")
-    public ResponseEntity<Agendamento> getAgendamentoByPaciente(@PathVariable String cpf) {
+    @GetMapping("/paciente/{cpf}")
+    public ResponseEntity<List<Agendamento>> getAgendamentoByPaciente(@RequestParam String cpf) {
         var agendamento = agendamentoService.getByPacienteCpf(cpf);
         if (agendamento == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(agendamento);
     }
+
+    @GetMapping
+    public ResponseEntity<List<Agendamento>> getAllAgendamentos() {
+        var agendamentos = agendamentoService.getAll();
+        if (agendamentos == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(agendamentos);
+    }
+
 }

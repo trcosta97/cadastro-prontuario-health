@@ -8,6 +8,8 @@ import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AgendamentoService {
 
@@ -37,11 +39,15 @@ public class AgendamentoService {
         return agendamentoRepository.save(agendamento);
     }
 
-    public Agendamento getByPacienteCpf(String cpf) {
+    public List<Agendamento> getByPacienteCpf(String cpf) {
         return agendamentoRepository.findByPacienteCpf(cpf);
     }
 
-    public Agendamento getByMedicoCpf(String cpf) {
+    public List<Agendamento> getByMedicoCpf(String cpf) {
         return agendamentoRepository.findByMedicoCpf(cpf);
+    }
+
+    public List<Agendamento> getAll() {
+        return agendamentoRepository.findAll();
     }
 }
