@@ -159,6 +159,24 @@
 </div>
 
 <script>
+    // Verificar se temos um agendamento ativo ao carregar a página
+    let agendamentoAtualId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar se há ID de agendamento armazenado no localStorage
+        agendamentoAtualId = localStorage.getItem('agendamentoAtualId');
+
+        // Verificar se temos um parâmetro de CPF na URL (vindo da página de agendamentos)
+        const urlParams = new URLSearchParams(window.location.search);
+        const cpfParam = urlParams.get('cpf');
+
+        if (cpfParam) {
+            // Preencher o campo de CPF e executar a busca automaticamente
+            document.getElementById('cpf').value = cpfParam;
+            buscarPaciente();
+        }
+    });
+
     function atualizarCamposAvaliacao() {
         const perfil = document.getElementById('perfilProfissional').value;
 
@@ -355,14 +373,48 @@
             return res.json();
         })
         .then(data => {
+            // Prontuário salvo com sucesso
             mostrarAlerta('Prontuário salvo com sucesso!', 'alert-success');
+
+            // Se tiver um agendamento associado, marcar como realizado
+            if (agendamentoAtualId) {
+                marcarAgendamentoComoRealizado(agendamentoAtualId, token);
+            }
         })
         .catch(err => mostrarAlerta(err.message, 'alert-danger'));
     });
 
+    // Função para marcar o agendamento como realizado
+    function marcarAgendamentoComoRealizado(agendamentoId, token) {
+        fetch(`http://localhost:8080/api/agendamentos/${agendamentoId}/realizado`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar status do agendamento');
+            return res.json();
+        })
+        .then(data => {
+            mostrarAlerta('Prontuário salvo e agendamento marcado como realizado com sucesso!', 'alert-success');
+            // Limpar o ID do agendamento atual do localStorage após o uso
+            localStorage.removeItem('agendamentoAtualId');
+        })
+        .catch(err => {
+            console.error('Erro ao atualizar status do agendamento:', err);
+            // Ainda mostramos que o prontuário foi salvo, mas indicamos o erro na atualização do agendamento
+            mostrarAlerta('Prontuário salvo com sucesso, mas houve um erro ao atualizar o status do agendamento.', 'alert-warning');
+        });
+    }
+
     function mostrarAlerta(message, type) {
         const alertContainer = document.getElementById('alert-container');
         alertContainer.innerHTML = `<div class="alert ${type} mt-3" role="alert">${message}</div>`;
+
+        // Rolar para mostrar o alerta
+        alertContainer.scrollIntoView({ behavior: 'smooth' });
     }
 </script>
 

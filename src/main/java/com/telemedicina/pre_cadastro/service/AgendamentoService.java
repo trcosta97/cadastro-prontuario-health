@@ -1,6 +1,7 @@
 package com.telemedicina.pre_cadastro.service;
 
 import com.telemedicina.pre_cadastro.domain.Agendamento.Agendamento;
+import com.telemedicina.pre_cadastro.domain.Agendamento.Enums.StatusAgendamento;
 import com.telemedicina.pre_cadastro.domain.Dto.AgendamentoRequestDTO;
 import com.telemedicina.pre_cadastro.repository.AgendamentoRepository;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
@@ -49,5 +50,33 @@ public class AgendamentoService {
 
     public List<Agendamento> getAll() {
         return agendamentoRepository.findAll();
+    }
+
+    public Agendamento cancelarAgendamento(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
+        return agendamentoRepository.save(agendamento);
+    }
+
+    public Agendamento confirmarAgendamento(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        agendamento.setStatusAgendamento(StatusAgendamento.CONFIRMADO);
+        return agendamentoRepository.save(agendamento);
+    }
+
+    public Agendamento naoCompareceu(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        agendamento.setStatusAgendamento(StatusAgendamento.NAO_COMPARECEU);
+        return agendamentoRepository.save(agendamento);
+    }
+
+    public Agendamento agendamentoRealizado(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+        agendamento.setStatusAgendamento(StatusAgendamento.REALIZADO);
+        return agendamentoRepository.save(agendamento);
     }
 }

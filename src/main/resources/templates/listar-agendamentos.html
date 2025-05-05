@@ -194,8 +194,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-danger" id="btnCancelar">Cancelar Agendamento</button>
-                <button type="button" class="btn btn-success" id="btnConfirmar">Confirmar Agendamento</button>
+                <button type="button" class="btn btn-warning" id="btnNaoCompareceu">Não Compareceu</button>
+                <button type="button" class="btn btn-danger" id="btnCancelar">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnConfirmar">Confirmar</button>
+                <button type="button" class="btn btn-info" id="btnIniciarConsulta">Iniciar Consulta</button>
             </div>
         </div>
     </div>
@@ -210,6 +212,9 @@
         // Máscara para o campo CPF
         $('#cpfConsulta').mask('000.000.000-00');
 
+        // Armazenar paciente CPF para navegação
+        let pacienteCpfAtual = '';
+
         // Manipula o envio do formulário de consulta
         document.getElementById('consultaForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -221,6 +226,10 @@
 
             const tipoConsulta = document.getElementById('tipoConsulta').value;
             const cpf = document.getElementById('cpfConsulta').value.replace(/[^\d]/g, '');
+
+            if (tipoConsulta === 'paciente') {
+                pacienteCpfAtual = cpf;
+            }
 
             // Construir a URL de consulta correta
             let url = `/api/agendamento/${tipoConsulta}/${cpf}`;
@@ -271,15 +280,33 @@
         document.getElementById('btnCancelar').addEventListener('click', function() {
             atualizarStatusAgendamento(
                 document.getElementById('modal-id').textContent,
-                'CANCELADO'
+                'cancelar'
             );
         });
 
         document.getElementById('btnConfirmar').addEventListener('click', function() {
             atualizarStatusAgendamento(
                 document.getElementById('modal-id').textContent,
-                'CONFIRMADO'
+                'confirmar'
             );
+        });
+
+        document.getElementById('btnNaoCompareceu').addEventListener('click', function() {
+            atualizarStatusAgendamento(
+                document.getElementById('modal-id').textContent,
+                'naoCompareceu'
+            );
+        });
+
+        document.getElementById('btnIniciarConsulta').addEventListener('click', function() {
+            const pacienteCpf = document.getElementById('modal-paciente-cpf').textContent.replace(/[^\d]/g, '');
+            const agendamentoId = document.getElementById('modal-id').textContent;
+
+            // Armazenar o ID do agendamento no localStorage para usar após salvar o prontuário
+            localStorage.setItem('agendamentoAtualId', agendamentoId);
+
+            // Redirecionar para a página de novo prontuário
+            window.location.href = `/novo-prontuario?cpf=${pacienteCpf}`;
         });
     });
 
@@ -305,7 +332,7 @@
                 case 'REALIZADO':
                     statusClass = 'bg-info';
                     break;
-                case 'AUSENTE':
+                case 'NAO_COMPARECEU':
                     statusClass = 'bg-warning';
                     break;
             }
@@ -383,33 +410,45 @@
         // Habilitar/desabilitar botões conforme o status atual
         const btnCancelar = document.getElementById('btnCancelar');
         const btnConfirmar = document.getElementById('btnConfirmar');
+        const btnNaoCompareceu = document.getElementById('btnNaoCompareceu');
+        const btnIniciarConsulta = document.getElementById('btnIniciarConsulta');
+
+        // Redefine o estado inicial dos botões para garantir que sejam configurados corretamente
+        btnCancelar.disabled = false;
+        btnConfirmar.disabled = false;
+        btnNaoCompareceu.disabled = false;
+        btnIniciarConsulta.disabled = false;
 
         if (agendamento.statusAgendamento === 'CANCELADO' ||
             agendamento.statusAgendamento === 'REALIZADO' ||
-            agendamento.statusAgendamento === 'AUSENTE') {
+            agendamento.statusAgendamento === 'NAO_COMPARECEU') {
+            // Desabilita todos os botões para agendamentos que não podem mais ser alterados
             btnCancelar.disabled = true;
             btnConfirmar.disabled = true;
+            btnNaoCompareceu.disabled = true;
+            btnIniciarConsulta.disabled = true;
         } else {
+            // Para agendamentos em outros estados (como PENDENTE ou CONFIRMADO)
             btnCancelar.disabled = false;
             btnConfirmar.disabled = (agendamento.statusAgendamento === 'CONFIRMADO');
+            btnNaoCompareceu.disabled = false;
+
+            // Habilitar "Iniciar Consulta" somente se estiver confirmado
+            btnIniciarConsulta.disabled = (agendamento.statusAgendamento !== 'CONFIRMADO');
+
+            // Verificação adicional para garantir que o botão está habilitado para agendamentos confirmados
+            console.log("Status do agendamento:", agendamento.statusAgendamento);
+            console.log("Botão Iniciar Consulta está desabilitado:", btnIniciarConsulta.disabled);
         }
 
         // Abrir o modal
         const modal = new bootstrap.Modal(document.getElementById('detalheModal'));
         modal.show();
-    }
+}
 
-    function atualizarStatusAgendamento(id, novoStatus) {
-        if (!id || !novoStatus) return;
+    function atualizarStatusAgendamento(id, acao) {
+        if (!id || !acao) return;
 
-        alert('Funcionalidade de atualização de status não está disponível no backend. Status desejado: ' + novoStatus);
-
-        // Fechar o modal após a mensagem
-        const modal = bootstrap.Modal.getInstance(document.getElementById('detalheModal'));
-        modal.hide();
-
-        // Nota: A implementação real deveria ser assim quando o endpoint estiver disponível:
-        /*
         const token = localStorage.getItem('jwtToken');
 
         if (!token) {
@@ -418,15 +457,12 @@
             return;
         }
 
-        fetch(`/api/agendamento/${id}/status`, {
+        fetch(`/api/agendamento/${id}/${acao}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({
-                statusAgendamento: novoStatus
-            })
+            }
         })
         .then(response => {
             if (!response.ok) {
@@ -439,16 +475,23 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('detalheModal'));
             modal.hide();
 
+            // Mostrar mensagem de sucesso
+            const statusText = {
+                'cancelar': 'cancelado',
+                'confirmar': 'confirmado',
+                'naoCompareceu': 'marcado como ausente',
+                'realizado': 'marcado como realizado'
+            };
+
+            alert(`Agendamento ${statusText[acao]} com sucesso!`);
+
             // Recarregar os agendamentos (simular um novo clique no botão buscar)
             document.getElementById('consultaForm').dispatchEvent(new Event('submit'));
-
-            alert(`Agendamento ${novoStatus.toLowerCase()} com sucesso!`);
         })
         .catch(error => {
             console.error('Erro:', error);
             alert('Erro ao atualizar status do agendamento.');
         });
-        */
     }
 </script>
 

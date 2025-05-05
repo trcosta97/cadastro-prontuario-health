@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/agendamento")
@@ -28,7 +27,7 @@ public class AgendamentoController {
     }
 
     @GetMapping("/medico/{cpf}")
-    public ResponseEntity<List<Agendamento>> getAgendamentoByMedico(@RequestParam String cpf) {
+    public ResponseEntity<List<Agendamento>> getAgendamentoByMedico(@PathVariable String cpf) {
         var agendamento = agendamentoService.getByMedicoCpf(cpf);
         if (agendamento == null) {
             return ResponseEntity.notFound().build();
@@ -37,7 +36,7 @@ public class AgendamentoController {
     }
 
     @GetMapping("/paciente/{cpf}")
-    public ResponseEntity<List<Agendamento>> getAgendamentoByPaciente(@RequestParam String cpf) {
+    public ResponseEntity<List<Agendamento>> getAgendamentoByPaciente(@PathVariable String cpf) {
         var agendamento = agendamentoService.getByPacienteCpf(cpf);
         if (agendamento == null) {
             return ResponseEntity.notFound().build();
@@ -53,5 +52,30 @@ public class AgendamentoController {
         }
         return ResponseEntity.ok(agendamentos);
     }
+
+    @PutMapping("/{id}/cancelar")
+    public ResponseEntity<Agendamento> cancelarAgendamento(@PathVariable Long id) {
+        Agendamento agendamento = agendamentoService.cancelarAgendamento(id);
+        return ResponseEntity.ok(agendamento);
+    }
+
+    @PutMapping("/{id}/confirmar")
+    public ResponseEntity<Agendamento> confirmarAgendamento(@PathVariable Long id) {
+        Agendamento agendamento = agendamentoService.confirmarAgendamento(id);
+        return ResponseEntity.ok(agendamento);
+    }
+
+    @PutMapping("/{id}/naoCompareceu")
+    public ResponseEntity<Agendamento> naoCompareceu(@PathVariable Long id) {
+        Agendamento agendamento = agendamentoService.naoCompareceu(id);
+        return ResponseEntity.ok(agendamento);
+    }
+
+    @PutMapping("/{id}/realizado")
+    public ResponseEntity<Agendamento> realizado(@PathVariable Long id) {
+        Agendamento agendamento = agendamentoService.agendamentoRealizado(id);
+        return ResponseEntity.ok(agendamento);
+    }
+
 
 }
