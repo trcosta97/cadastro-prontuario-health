@@ -1,7 +1,7 @@
 package com.telemedicina.pre_cadastro.service;
 
 import com.telemedicina.pre_cadastro.domain.Endereco;
-import com.telemedicina.pre_cadastro.repository.EndereçoRepository;
+import com.telemedicina.pre_cadastro.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ public class EnderecoService {
 
 
     @Autowired
-    EndereçoRepository repository;
+    EnderecoRepository repository;
 
 
     public Iterable<Endereco> getAll(){
