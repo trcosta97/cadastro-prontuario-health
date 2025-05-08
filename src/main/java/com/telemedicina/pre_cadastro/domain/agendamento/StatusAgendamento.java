@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Agendamento.Enums;
+package com.telemedicina.pre_cadastro.domain.agendamento;
 
 public enum StatusAgendamento {
     AGENDADO("Agendado"),

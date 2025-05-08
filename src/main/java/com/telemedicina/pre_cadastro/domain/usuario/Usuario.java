@@ -1,10 +1,10 @@
-package com.telemedicina.pre_cadastro.domain.Usuario;
+package com.telemedicina.pre_cadastro.domain.usuario;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.telemedicina.pre_cadastro.domain.Dto.LoginRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Dto.SaveUsuarioDTO;
+import com.telemedicina.pre_cadastro.domain.dto.LoginRequestDTO;
+import com.telemedicina.pre_cadastro.domain.dto.SaveUsuarioDTO;
 import com.telemedicina.pre_cadastro.domain.Endereco;
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;

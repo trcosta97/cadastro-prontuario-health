@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Dto;
+package com.telemedicina.pre_cadastro.domain.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -24,6 +24,7 @@ public record PreSavePacienteRequestDTO(
         String sexo,
 
         boolean gestante,
+        boolean pueperia,
 
         @NotBlank(message = "O celular é obrigatório")
         @Pattern(regexp = "\\d{11}", message = "O celular deve conter 11 dígitos (DDD + número)")
@@ -39,6 +40,9 @@ public record PreSavePacienteRequestDTO(
 
         @NotNull(message = "O endereço é obrigatório")
         @Valid
-        SaveEnderecoRequestDTO endereco
+        SaveEnderecoRequestDTO endereco,
+        @NotBlank
+        @Valid
+        String cdProntuario
 
 ) {}

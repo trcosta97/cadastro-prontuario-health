@@ -1,8 +1,8 @@
 package com.telemedicina.pre_cadastro.controller;
 
 
-import com.telemedicina.pre_cadastro.domain.Agendamento.Agendamento;
-import com.telemedicina.pre_cadastro.domain.Dto.AgendamentoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.agendamento.Agendamento;
+import com.telemedicina.pre_cadastro.domain.dto.AgendamentoRequestDTO;
 import com.telemedicina.pre_cadastro.service.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

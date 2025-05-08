@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.controller;
 
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
 import com.telemedicina.pre_cadastro.service.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

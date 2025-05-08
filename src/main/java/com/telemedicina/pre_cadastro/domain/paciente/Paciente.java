@@ -1,9 +1,9 @@
-package com.telemedicina.pre_cadastro.domain.Paciente;
+package com.telemedicina.pre_cadastro.domain.paciente;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.telemedicina.pre_cadastro.domain.Dto.PreSavePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.dto.PreSavePacienteRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Endereco;
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.*;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
@@ -19,6 +19,8 @@ public class Paciente {
     private Long id;
     //Campos de pré-cadastro
     private String cpf;
+    @Column(name = "cd_prontuario")
+    private String cdProntuario;
     @Column(name = "fullname")
     private String nomeCompleto;
     @Column(name = "birthdate")
@@ -110,7 +112,7 @@ public class Paciente {
                     Boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, Boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero,
                     Boolean infoDeficiencia, Deficiencias deficiencia, Boolean planoSaude, Boolean comunidadeTradicional, Boolean menorQueDoisAnos,
                     Boolean hipertensaoArterialSistemica, Boolean diabetes, Boolean hanseniase, Boolean tuberculose, Boolean transtornoMental,
-                    Boolean puperpera, Boolean saudeMental, Boolean gestante) {
+                    Boolean puperpera, Boolean saudeMental, Boolean gestante, String cdProntuario) {
         this.id = id;
         this.cpf = cpf;
         this.nomeCompleto = nomeCompleto;
@@ -150,6 +152,7 @@ public class Paciente {
         this.puerperio = puperpera;
         this.saudeMental = saudeMental;
         this.gestante = gestante;
+        this.cdProntuario = cdProntuario;
     }
 
     public Paciente() {
@@ -164,6 +167,8 @@ public class Paciente {
         this.email = data.email();
         this.senha = data.senha();
         this.endereco = new Endereco(data.endereco());
+        this.cdProntuario = data.cdProntuario();
+        this.puerperio = data.pueperia();
 
     }
 
@@ -464,6 +469,14 @@ public class Paciente {
 
     public void setGestante(Boolean gestante) {
         this.gestante = gestante;
+    }
+
+    public String getCdProntuario() {
+        return cdProntuario;
+    }
+
+    public void setCdProntuario(String cdProntuario) {
+        this.cdProntuario = cdProntuario;
     }
 
 }

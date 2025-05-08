@@ -1,8 +1,8 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Agendamento.Agendamento;
-import com.telemedicina.pre_cadastro.domain.Agendamento.Enums.StatusAgendamento;
-import com.telemedicina.pre_cadastro.domain.Dto.AgendamentoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.agendamento.Agendamento;
+import com.telemedicina.pre_cadastro.domain.agendamento.StatusAgendamento;
+import com.telemedicina.pre_cadastro.domain.dto.AgendamentoRequestDTO;
 import com.telemedicina.pre_cadastro.repository.AgendamentoRepository;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;

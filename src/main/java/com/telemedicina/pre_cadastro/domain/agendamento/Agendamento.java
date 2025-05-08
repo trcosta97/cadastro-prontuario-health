@@ -1,10 +1,9 @@
-package com.telemedicina.pre_cadastro.domain.Agendamento;
+package com.telemedicina.pre_cadastro.domain.agendamento;
 
 
-import com.telemedicina.pre_cadastro.domain.Agendamento.Enums.StatusAgendamento;
-import com.telemedicina.pre_cadastro.domain.Dto.AgendamentoRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.dto.AgendamentoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

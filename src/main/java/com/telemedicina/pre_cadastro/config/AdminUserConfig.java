@@ -1,7 +1,7 @@
 package com.telemedicina.pre_cadastro.config;
 
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;

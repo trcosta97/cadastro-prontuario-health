@@ -1,7 +1,7 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
+import com.telemedicina.pre_cadastro.domain.dto.UpdatePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +79,11 @@ public class PacienteService {
     public List<Paciente> buscarTodosAtivos() {
         return repository.findAllByAtivoTrue()
                 .orElseThrow(() -> new RuntimeException("Nenhum paciente ativo encontrado"));
+    }
+
+    public Paciente getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
     }
 
 

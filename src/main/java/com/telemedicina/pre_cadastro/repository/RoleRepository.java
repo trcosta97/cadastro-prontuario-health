@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.repository;
 
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Paciente.Enums.Roles;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +63,11 @@ public class UsuarioService {
     public List<Usuario> buscarTodosAtivos() {
         return repository.findAllByAtivoTrue()
                 .orElseThrow(() -> new RuntimeException("Nenhum usuário ativo encontrado"));
+    }
+
+    public Usuario getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
 }

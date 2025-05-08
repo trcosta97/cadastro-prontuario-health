@@ -2,9 +2,9 @@ package com.telemedicina.pre_cadastro.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.telemedicina.pre_cadastro.domain.Dto.SaveEnderecoRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.dto.SaveEnderecoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import jakarta.persistence.*;
 
 

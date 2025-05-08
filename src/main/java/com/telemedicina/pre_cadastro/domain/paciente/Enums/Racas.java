@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Paciente.Enums;
+package com.telemedicina.pre_cadastro.domain.paciente.Enums;
 
 public enum Racas {
     BRANCA("Branca"),

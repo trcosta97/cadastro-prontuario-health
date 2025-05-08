@@ -1,8 +1,7 @@
 package com.telemedicina.pre_cadastro.repository;
 
 
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

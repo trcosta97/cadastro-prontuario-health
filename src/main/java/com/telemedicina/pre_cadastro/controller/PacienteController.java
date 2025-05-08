@@ -1,12 +1,10 @@
 package com.telemedicina.pre_cadastro.controller;
 
 
-import com.telemedicina.pre_cadastro.domain.Dto.PreSavePacienteRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Dto.UpdatePacienteRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.dto.PreSavePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.dto.UpdatePacienteRequestDTO;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.service.PacienteService;
-import com.telemedicina.pre_cadastro.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

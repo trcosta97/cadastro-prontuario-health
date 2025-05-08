@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Dto;
+package com.telemedicina.pre_cadastro.domain.dto;
 
 public record SaveEnderecoRequestDTO(
         String cep,

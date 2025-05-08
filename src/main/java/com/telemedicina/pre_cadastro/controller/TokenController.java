@@ -1,8 +1,7 @@
 package com.telemedicina.pre_cadastro.controller;
 
-import com.telemedicina.pre_cadastro.domain.Dto.LoginRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Dto.LoginResponseDTO;
-import com.telemedicina.pre_cadastro.repository.PacienteRepository;
+import com.telemedicina.pre_cadastro.domain.dto.LoginRequestDTO;
+import com.telemedicina.pre_cadastro.domain.dto.LoginResponseDTO;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

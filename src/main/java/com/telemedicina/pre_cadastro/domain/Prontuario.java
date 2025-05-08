@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.domain;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

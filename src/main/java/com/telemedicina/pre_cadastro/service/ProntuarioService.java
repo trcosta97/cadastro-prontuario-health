@@ -1,9 +1,9 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.Dto.ProntuarioRequestDTO;
-import com.telemedicina.pre_cadastro.domain.Paciente.Paciente;
+import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
-import com.telemedicina.pre_cadastro.domain.Usuario.Usuario;
+import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.ProntuarioRepository;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;

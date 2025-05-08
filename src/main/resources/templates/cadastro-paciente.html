@@ -40,6 +40,10 @@
                     <label for="cpf" class="form-label">CPF</label>
                     <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" required>
                 </div>
+                <div class="col-md-6">
+                    <label for="cdProntuario" class="form-label">Código de Prontuário</label>
+                    <input type="text" class="form-control" id="cdProntuario" required>
+                </div>
             </div>
 
             <div class="row mb-3">
@@ -67,6 +71,15 @@
                 </div>
             </div>
 
+            <div class="row mb-3" id="pueperia-section" style="display: none;">
+                <div class="col-md-4 offset-md-8">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="pueperia">
+                        <label class="form-check-label" for="pueperia">É puérpera?</label>
+                    </div>
+                </div>
+            </div>
+
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="celular" class="form-label">Celular</label>
@@ -77,11 +90,6 @@
                     <input type="email" class="form-control" id="email" required>
                 </div>
             </div>
-
-<!--            <div class="mb-3">-->
-<!--                <label for="senha" class="form-label">Senha</label>-->
-<!--                <input type="password" class="form-control" id="senha" required>-->
-<!--            </div>-->
 
             <h4 class="mt-4">Endereço</h4>
             <hr>
@@ -120,33 +128,10 @@
                 <div class="col-md-4">
                     <label for="estado" class="form-label">Estado</label>
                     <select class="form-select" id="estado" required>
-                        <option value="AC">Acre</option>
-                        <option value="AL">Alagoas</option>
-                        <option value="AP">Amapá</option>
-                        <option value="AM">Amazonas</option>
-                        <option value="BA">Bahia</option>
-                        <option value="CE">Ceará</option>
-                        <option value="DF">Distrito Federal</option>
-                        <option value="ES">Espírito Santo</option>
-                        <option value="GO">Goiás</option>
-                        <option value="MA">Maranhão</option>
-                        <option value="MT">Mato Grosso</option>
-                        <option value="MS">Mato Grosso do Sul</option>
-                        <option value="MG">Minas Gerais</option>
-                        <option value="PA">Pará</option>
-                        <option value="PB">Paraíba</option>
-                        <option value="PR">Paraná</option>
-                        <option value="PE">Pernambuco</option>
-                        <option value="PI">Piauí</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="RN">Rio Grande do Norte</option>
-                        <option value="RS">Rio Grande do Sul</option>
-                        <option value="RO">Rondônia</option>
-                        <option value="RR">Roraima</option>
-                        <option value="SC">Santa Catarina</option>
+                        <option value="">Selecione...</option>
                         <option value="SP">São Paulo</option>
-                        <option value="SE">Sergipe</option>
-                        <option value="TO">Tocantins</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <!-- Demais estados aqui -->
                     </select>
                 </div>
             </div>
@@ -159,107 +144,105 @@
 </div>
 
 <script>
-    // Verificar se o token JWT existe
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const token = localStorage.getItem('jwtToken');
         if (!token) {
             window.location.href = '/login';
         }
 
-        // Mostrar campo "Gestante" apenas se o sexo for feminino
-        document.getElementById('sexo').addEventListener('change', function() {
-            const gestanteField = document.querySelectorAll('input[name="gestante"]');
-            const gestanteSection = gestanteField[0].parentElement.parentElement;
+        const sexoInput = document.getElementById('sexo');
+        const gestanteRadios = document.querySelectorAll('input[name="gestante"]');
+        const gestanteSection = gestanteRadios[0].closest('.col-md-4');
+        const pueperiaSection = document.getElementById('pueperia-section');
 
-            if (this.value === 'F') {
-                gestanteSection.style.display = 'block';
+        function atualizarCampos() {
+            const sexo = sexoInput.value;
+            const gestante = document.querySelector('input[name="gestante"]:checked').value;
+
+            gestanteSection.style.display = sexo === 'F' ? 'block' : 'none';
+            if (sexo === 'F' && gestante === 'false') {
+                pueperiaSection.style.display = 'block';
             } else {
-                gestanteSection.style.display = 'none';
-                document.getElementById('gestante-nao').checked = true;
+                pueperiaSection.style.display = 'none';
+                document.getElementById('pueperia').checked = false;
+            }
+        }
+
+        sexoInput.addEventListener('change', atualizarCampos);
+        gestanteRadios.forEach(radio => radio.addEventListener('change', atualizarCampos));
+        atualizarCampos(); // Chamada inicial
+
+        document.getElementById('cep').addEventListener('blur', function () {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('logradouro').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                            document.getElementById('estado').value = data.uf;
+                        }
+                    });
             }
         });
 
-        // Trigger inicial para definir a visibilidade do campo gestante
-        document.getElementById('sexo').dispatchEvent(new Event('change'));
-    });
+        document.getElementById('cadastro-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const alertMessage = document.getElementById('alert-message');
 
-    // Buscar endereço pelo CEP
-    document.getElementById('cep').addEventListener('blur', function() {
-        const cep = this.value.replace(/\D/g, '');
-        if (cep.length === 8) {
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-            .then(response => response.json())
-            .then(data => {
-                if (!data.erro) {
-                    document.getElementById('logradouro').value = data.logradouro;
-                    document.getElementById('bairro').value = data.bairro;
-                    document.getElementById('cidade').value = data.localidade;
-                    document.getElementById('estado').value = data.uf;
+            const pacienteData = {
+                nomeCompleto: document.getElementById('nomeCompleto').value,
+                cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
+                cdProntuario: document.getElementById('cdProntuario').value,
+                dataNascimento: document.getElementById('dataNascimento').value,
+                sexo: document.getElementById('sexo').value,
+                gestante: document.querySelector('input[name="gestante"]:checked').value === 'true',
+                pueperia: document.getElementById('pueperia').checked,
+                celular: document.getElementById('celular').value.replace(/\D/g, ''),
+                email: document.getElementById('email').value,
+                senha: "123",
+                endereco: {
+                    cep: document.getElementById('cep').value.replace(/\D/g, ''),
+                    logradouro: document.getElementById('logradouro').value,
+                    numero: document.getElementById('numero').value,
+                    bairro: document.getElementById('bairro').value,
+                    cidade: document.getElementById('cidade').value,
+                    estado: document.getElementById('estado').value,
+                    complemento: document.getElementById('complemento').value
                 }
-            });
-        }
-    });
+            };
 
-    // Submeter o formulário
-    document.getElementById('cadastro-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const alertMessage = document.getElementById('alert-message');
-        const token = localStorage.getItem('jwtToken');
-
-        const gestanteValue = document.querySelector('input[name="gestante"]:checked').value === 'true';
-
-        const pacienteData = {
-            nomeCompleto: document.getElementById('nomeCompleto').value,
-            cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
-            dataNascimento: document.getElementById('dataNascimento').value,
-            sexo: document.getElementById('sexo').value,
-            gestante: gestanteValue,
-            celular: document.getElementById('celular').value.replace(/\D/g, ''),
-            email: document.getElementById('email').value,
-            senha: "123",
-            endereco: {
-                cep: document.getElementById('cep').value.replace(/\D/g, ''),
-                logradouro: document.getElementById('logradouro').value,
-                numero: document.getElementById('numero').value,
-                bairro: document.getElementById('bairro').value,
-                cidade: document.getElementById('cidade').value,
-                estado: document.getElementById('estado').value,
-                complemento: document.getElementById('complemento').value
-            }
-        };
-
-        fetch('http://localhost:8080/api/paciente/cadastro', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(pacienteData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao cadastrar paciente');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alertMessage.className = 'alert alert-success';
-            alertMessage.textContent = 'Paciente cadastrado com sucesso!';
-            alertMessage.style.display = 'block';
-
-            // Limpar o formulário
-            document.getElementById('cadastro-form').reset();
-
-            // Redirecionar após 2 segundos
-            setTimeout(() => {
-                window.location.href = '/home';
-            }, 2000);
-        })
-        .catch(error => {
-            alertMessage.className = 'alert alert-danger';
-            alertMessage.textContent = error.message;
-            alertMessage.style.display = 'block';
+            fetch('http://localhost:8080/api/paciente/cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(pacienteData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao cadastrar paciente');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alertMessage.className = 'alert alert-success';
+                    alertMessage.textContent = 'Paciente cadastrado com sucesso!';
+                    alertMessage.style.display = 'block';
+                    document.getElementById('cadastro-form').reset();
+                    atualizarCampos();
+                    setTimeout(() => {
+                        window.location.href = '/home';
+                    }, 2000);
+                })
+                .catch(error => {
+                    alertMessage.className = 'alert alert-danger';
+                    alertMessage.textContent = error.message;
+                    alertMessage.style.display = 'block';
+                });
         });
     });
 </script>

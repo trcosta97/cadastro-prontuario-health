@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.Dto;
+package com.telemedicina.pre_cadastro.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
