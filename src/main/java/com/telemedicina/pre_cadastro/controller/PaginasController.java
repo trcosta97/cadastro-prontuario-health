@@ -66,6 +66,11 @@ public class PaginasController {
         return "listar-agendamentos";
     }
 
+    @GetMapping("/nova-declaracao")
+    public String novaDeclaracao() {
+        return "nova-declaracao";
+    }
+
 
 
 

@@ -23,13 +23,17 @@ public class Declaracao {
     private Usuario usuario;
     private LocalDateTime entrada;
     private LocalDateTime saida;
+    @ElementCollection(targetClass = MotivoDeclaracao.class)
+    @CollectionTable(name = "tb_motivos_declaracao", joinColumns = @JoinColumn(name = "declaracao_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "motivo")
     private List<MotivoDeclaracao> motivos;
 
     public Declaracao(DeclaracaoRequestDTO data){
         this.paciente = new Paciente();
         this.paciente.setId(data.pacienteId());
         this.usuario = new Usuario();
-        this.usuario.setId(data.usuarioId());
+        //this.usuario.setId(data.usuarioId());
         this.entrada = data.entrada();
         this.saida = data.saida();
         this.motivos = data.motivos();

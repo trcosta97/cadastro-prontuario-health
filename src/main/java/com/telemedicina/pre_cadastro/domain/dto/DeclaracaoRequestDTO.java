@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record DeclaracaoRequestDTO(Long pacienteId,
-                                   Long usuarioId,
+                                   //Long usuarioId,
                                    LocalDateTime entrada,
                                    LocalDateTime saida,
                                    List<MotivoDeclaracao> motivos) { }

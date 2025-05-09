@@ -17,4 +17,6 @@ public class DeclaracaoService {
     public Declaracao save(Declaracao declaracao) {
         return repository.save(declaracao);
     }
+
+
 }
