@@ -46,6 +46,38 @@
             <textarea class="form-control" id="objetivo" rows="3"></textarea>
         </div>
 
+        <!-- Sinais vitais -->
+        <!-- Adicione após os campos de comorbidades -->
+        <div class="form-group mt-3">
+            <h5>Sinais Vitais</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="pressaoArterial">Pressão Arterial (ex: 120x80)</label>
+                    <input type="text" class="form-control" id="pressaoArterial" placeholder="Ex: 120x80">
+                </div>
+                <div class="col-md-6">
+                    <label for="frequenciaRespiratoria">Frequência Respiratória (irpm)</label>
+                    <input type="number" class="form-control" id="frequenciaRespiratoria" min="0">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <label for="frequenciaCardiaca">Frequência Cardíaca (bpm)</label>
+                    <input type="number" class="form-control" id="frequenciaCardiaca" min="0">
+                </div>
+                <div class="col-md-6">
+                    <label for="temperatura">Temperatura Corporal (°C)</label>
+                    <input type="number" step="0.1" class="form-control" id="temperatura" min="35" max="42">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <label for="escalaDor">Escala de Dor (0-10)</label>
+                    <input type="number" class="form-control" id="escalaDor" min="0" max="10">
+                </div>
+            </div>
+        </div>
+
         <!-- Avaliação com campos específicos por perfil profissional -->
         <div class="form-group mt-3">
             <label for="avaliacao">Avaliação (Hipótese Diagnóstica)</label>
@@ -345,6 +377,8 @@
             ciapValue = document.getElementById('ciapMulti').value;
         }
 
+
+
         const prontuarioData = {
             pacienteId: +pacienteId,
             cdProntuario: +cdProntuario,
@@ -362,7 +396,14 @@
             ciap: ciapValue,
             cip: cipValue,
             cipesc: cipescValue,
-            cidOdontologico: cidOdontologicoValue
+            cidOdontologico: cidOdontologicoValue,
+            sinaisVitais: {
+            pressaoArterial: document.getElementById('pressaoArterial').value,
+            frequenciaRespiratoria: document.getElementById('frequenciaRespiratoria').value ? +document.getElementById('frequenciaRespiratoria').value : null,
+            frequenciaCardiaca: document.getElementById('frequenciaCardiaca').value ? +document.getElementById('frequenciaCardiaca').value : null,
+            temperatura: document.getElementById('temperatura').value ? +document.getElementById('temperatura').value : null,
+            escalaDor: document.getElementById('escalaDor').value ? +document.getElementById('escalaDor').value : null
+            }
         };
 
         fetch('http://localhost:8080/api/prontuarios', {

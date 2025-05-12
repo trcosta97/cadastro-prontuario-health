@@ -1,5 +1,6 @@
 package com.telemedicina.pre_cadastro.service;
 
+import com.telemedicina.pre_cadastro.domain.SinaisVitais;
 import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
@@ -61,12 +62,20 @@ public class ProntuarioService {
             prontuario.setPuperpera(Boolean.TRUE.equals(paciente.getPuerperio()));
         }
 
+        prontuario.setDataAtendimento(LocalDateTime.now());
+
         return prontuarioRepository.save(prontuario);
     }
 
     @Transactional
     public Prontuario atualizarProntuario(Long id, ProntuarioRequestDTO dto) {
         Prontuario prontuario = buscarProntuario(id);
+
+        if (dto.sinaisVitais() != null) {
+            SinaisVitais sinais = new SinaisVitais(dto.sinaisVitais());
+            sinais.setProntuario(prontuario); // <- liga os dois lados da relação
+            prontuario.setSinaisVitais(sinais);
+        }
 
         prontuario.setSubjetivo(dto.subjetivo());
         prontuario.setObjetivo(dto.objetivo());

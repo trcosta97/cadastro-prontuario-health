@@ -6,46 +6,74 @@
     <style>
         body {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background-color: #f7f9fc;
+          background-color: #f0f4f8;
           margin: 0;
-          padding: 0;
+          padding: 2rem 1rem;
           display: flex;
           flex-direction: column;
           align-items: center;
         }
 
         h1 {
-          margin: 2rem 0 1rem;
-          color: #2c3e50;
+          font-size: 2rem;
+          color: #1e3a8a;
+          margin-bottom: 1rem;
         }
 
         #detalhes-prontuario {
           background-color: #ffffff;
           padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-          max-width: 600px;
-          width: 90%;
-          margin-bottom: 2rem;
-          color: #34495e;
+          border-radius: 16px;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+          max-width: 700px;
+          width: 100%;
+          color: #333;
         }
 
         #detalhes-prontuario p {
-          margin: 0.5rem 0;
-          line-height: 1.5;
+          margin: 0.75rem 0;
+          line-height: 1.6;
+          font-size: 1rem;
+        }
+
+        #detalhes-prontuario hr {
+          margin: 2rem 0;
+          border: none;
+          border-top: 1px solid #e2e8f0;
         }
 
         strong {
-          color: #2d3436;
+          color: #111827;
+        }
+
+        a.btn {
+          display: inline-block;
+          margin-top: 1.5rem;
+          padding: 0.6rem 1.2rem;
+          text-decoration: none;
+          background-color: #1e40af;
+          color: white;
+          border-radius: 8px;
+          font-weight: 500;
+          transition: background-color 0.3s;
+        }
+
+        a.btn:hover {
+          background-color: #1e3a8a;
         }
 
         @media (max-width: 600px) {
+          body {
+            padding: 1rem;
+          }
+
           #detalhes-prontuario {
             padding: 1.5rem;
           }
 
           h1 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            text-align: center;
           }
         }
     </style>
@@ -53,52 +81,82 @@
 <body>
 <h1>Detalhes do Prontuário</h1>
 <div id="detalhes-prontuario">Carregando...</div>
-<a href="/home" class="btn btn-secondary">Voltar para Home</a>
+<a href="/home" class="btn">Voltar para Home</a>
+
 <script>
     const token = localStorage.getItem("jwtToken");
     const path = window.location.pathname;
     const id = path.substring(path.lastIndexOf('/') + 1);
 
-    fetch(`/api/prontuarios/${id}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => {
-      if (!res.ok) throw new Error(`Erro ${res.status}`);
-      return res.json();
-    })
-    .then(prontuario => {
-      if (!prontuario) {
-        document.getElementById("detalhes-prontuario").innerText = "Prontuário não encontrado.";
-        return;
-      }
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
 
-      const div = document.getElementById("detalhes-prontuario");
-      const nomeMedico = prontuario.medico?.nomeCompleto || "(sem médico)";
-      const nomePaciente = prontuario.paciente?.nomeCompleto || "(sem paciente)";
+    fetch(`/api/prontuarios/${id}`, { headers })
+      .then(res => {
+        if (!res.ok) throw new Error(`Erro ${res.status} ao buscar prontuário`);
+        return res.json();
+      })
+      .then(prontuario => {
+        if (!prontuario) {
+          document.getElementById("detalhes-prontuario").innerText = "Prontuário não encontrado.";
+          return;
+        }
 
-      div.innerHTML = `
-        <p><strong>ID:</strong> ${prontuario.id}</p>
-        <p><strong>Paciente:</strong> ${nomePaciente}</p>
-        <p><strong>Médico:</strong> ${nomeMedico}</p>
-        <p><strong>Data de Atendimento:</strong> ${prontuario.dataAtendimento}</p>
-        <p><strong>Subjetivo:</strong> ${prontuario.subjetivo}</p>
-        <p><strong>Objetivo:</strong> ${prontuario.objetivo}</p>
-        <p><strong>Avaliação:</strong> ${prontuario.avaliacao}</p>
-        <p><strong>Plano:</strong> ${prontuario.plano}</p>
-        <p><strong>HAS:</strong> ${prontuario.hipertensaoArterialSistemica ? "Sim" : "Não"}</p>
-        <p><strong>Diabetes:</strong> ${prontuario.diabetes ? "Sim" : "Não"}</p>
-        <p><strong>Tuberculose:</strong> ${prontuario.tuberculose ? "Sim" : "Não"}</p>
-        <p><strong>Hanseníase:</strong> ${prontuario.hanseniase ? "Sim" : "Não"}</p>
-        <p><strong>Ativo:</strong> ${prontuario.ativo ? "Sim" : "Não"}</p>
-      `;
-    })
-    .catch(err => {
-      document.getElementById("detalhes-prontuario").innerText = "Erro ao carregar prontuário.";
-      console.error("Erro:", err);
-    });
+        const div = document.getElementById("detalhes-prontuario");
+        const nomeMedico = prontuario.medico?.nomeCompleto || "(sem médico)";
+        const nomePaciente = prontuario.paciente?.nomeCompleto || "(sem paciente)";
+
+        let html = `
+          <p><strong>ID:</strong> ${prontuario.id}</p>
+          <p><strong>Paciente:</strong> ${nomePaciente}</p>
+          <p><strong>Médico:</strong> ${nomeMedico}</p>
+          <p><strong>Data de Atendimento:</strong> ${prontuario.dataAtendimento}</p>
+          <p><strong>Subjetivo:</strong> ${prontuario.subjetivo}</p>
+          <p><strong>Objetivo:</strong> ${prontuario.objetivo}</p>
+          <p><strong>Avaliação:</strong> ${prontuario.avaliacao}</p>
+          <p><strong>Plano:</strong> ${prontuario.plano}</p>
+          <p><strong>HAS:</strong> ${prontuario.hipertensaoArterialSistemica ? "Sim" : "Não"}</p>
+          <p><strong>Diabetes:</strong> ${prontuario.diabetes ? "Sim" : "Não"}</p>
+          <p><strong>Tuberculose:</strong> ${prontuario.tuberculose ? "Sim" : "Não"}</p>
+          <p><strong>Hanseníase:</strong> ${prontuario.hanseniase ? "Sim" : "Não"}</p>
+          <p><strong>Ativo:</strong> ${prontuario.ativo ? "Sim" : "Não"}</p>
+        `;
+
+        fetch(`/api/sinais-vitais/prontuario/${prontuario.id}`, { headers })
+          .then(res => {
+            if (!res.ok) {
+              html += `<hr><p><strong>Sinais Vitais:</strong> não encontrados.</p>`;
+              div.innerHTML = html;
+              return;
+            }
+            return res.json();
+          })
+          .then(sinaisVitais => {
+            if (sinaisVitais) {
+              html += `
+                <hr>
+                <h3 style="margin-bottom: 1rem; color: #1e3a8a;">Sinais Vitais</h3>
+                <p><strong>Pressão Arterial:</strong> ${sinaisVitais.pressaoArterial}</p>
+                <p><strong>Frequência Respiratória:</strong> ${sinaisVitais.frequenciaRespiratoria}</p>
+                <p><strong>Frequência Cardíaca:</strong> ${sinaisVitais.frequenciaCardiaca}</p>
+                <p><strong>Temperatura Corporal:</strong> ${sinaisVitais.temperaturaCorporea} °C</p>
+                <p><strong>Escala de Dor:</strong> ${sinaisVitais.escalaDor}</p>
+              `;
+            }
+            div.innerHTML = html;
+          })
+          .catch(err => {
+            html += `<hr><p><strong>Sinais Vitais:</strong> erro ao carregar.</p>`;
+            div.innerHTML = html;
+            console.error("Erro ao buscar sinais vitais:", err);
+          });
+      })
+      .catch(err => {
+        document.getElementById("detalhes-prontuario").innerText = "Erro ao carregar prontuário.";
+        console.error("Erro:", err);
+      });
 </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 package com.telemedicina.pre_cadastro.domain;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
@@ -62,6 +63,11 @@ public class Prontuario {
     @Column(name = "saude_mental")
     private Boolean saudeMental;
 
+    @OneToOne(mappedBy = "prontuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private SinaisVitais sinaisVitais;
+
+
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
 
@@ -100,26 +106,30 @@ public class Prontuario {
         this.ativo = ativo;
     }
 
-    public Prontuario(ProntuarioRequestDTO data) {
-        this.paciente = new Paciente();
-        this.paciente.setId(data.pacienteId());
-        this.cdProntuario = data.cdProntuario();
-        this.subjetivo = data.subjetivo();
-        this.objetivo = data.objetivo();
-        this.avaliacao = data.avaliacao();
-        this.plano = data.plano();
-        this.hipertensaoArterialSistemica = data.hipertensaoArterialSistemica();
-        this.diabetes = data.diabetes();
-        this.tuberculose = data.tuberculose();
-        this.hanseniase = data.hanseniase();
-        this.gestante = data.gestante();
-        this.puperpera = data.puperpera();
-        this.saudeMental = data.saudeMental();
-        this.ciap = data.ciap();
-        this.cip = data.cip();
-        this.cipesc = data.cipesc();
-        this.cidOdontologico = data.cidOdontologico();
+    public Prontuario(ProntuarioRequestDTO dto) {
+        this.cdProntuario = dto.cdProntuario();
+        this.subjetivo = dto.subjetivo();
+        this.objetivo = dto.objetivo();
+        this.avaliacao = dto.avaliacao();
+        this.plano = dto.plano();
+        this.hipertensaoArterialSistemica = dto.hipertensaoArterialSistemica();
+        this.diabetes = dto.diabetes();
+        this.tuberculose = dto.tuberculose();
+        this.hanseniase = dto.hanseniase();
+        this.gestante = dto.gestante();
+        this.puperpera = dto.puperpera();
+        this.saudeMental = dto.saudeMental();
+        this.ciap = dto.ciap();
+        this.cip = dto.cip();
+        this.cipesc = dto.cipesc();
+        this.cidOdontologico = dto.cidOdontologico();
+
+        if (dto.sinaisVitais() != null) {
+            this.sinaisVitais = new SinaisVitais(dto.sinaisVitais());
+            this.sinaisVitais.setProntuario(this); // 💥 esse é o ponto-chave
+        }
     }
+
 
 
     // Getters e Setters
@@ -129,6 +139,14 @@ public class Prontuario {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public SinaisVitais getSinaisVitais() {
+        return sinaisVitais;
+    }
+
+    public void setSinaisVitais(SinaisVitais sinaisVitais) {
+        this.sinaisVitais = sinaisVitais;
     }
 
     public Paciente getPaciente() {
