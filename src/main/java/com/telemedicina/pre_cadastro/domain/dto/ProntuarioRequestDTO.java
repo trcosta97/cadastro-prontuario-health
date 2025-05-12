@@ -22,6 +22,4 @@ public record ProntuarioRequestDTO(
         String cipesc,
         String cidOdontologico,
         SinaisVitaisRequestDTO sinaisVitais
-
-
 ) {}

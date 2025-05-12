@@ -3,6 +3,7 @@ package com.telemedicina.pre_cadastro.controller;
 import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
 import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,8 +41,6 @@ public class ProntuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PacienteService pacienteService;
 
     // Listar prontuários de um paciente específico
     @GetMapping("/paciente/{pacienteId}")
@@ -61,8 +61,20 @@ public class ProntuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Prontuario> criarProntuario(@RequestBody ProntuarioRequestDTO data) {
-        var prontuario = new Prontuario(data);
+    public ResponseEntity<Prontuario> criarProntuario(@RequestBody ProntuarioRequestDTO data, Authentication authentication) {
+        Paciente paciente = pacienteRepository.findById(data.pacienteId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente não encontrado"));
+
+        Long medicoId;
+        try {
+            medicoId = Long.parseLong(authentication.getName());
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "ID do usuário inválido");
+        }
+        Usuario medico = usuarioRepository.findById(medicoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, medicoId + " não encontrado"));
+
+        var prontuario = new Prontuario(data, paciente, medico);
         prontuarioService.criarProntuario(prontuario);
         return ResponseEntity.ok(prontuario);
     }

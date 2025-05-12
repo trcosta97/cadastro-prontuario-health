@@ -13,70 +13,50 @@ public class Prontuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(name = "cd_prontario")
     private String cdProntuario;
-
     @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
-
     @ManyToOne
     @JoinColumn(name = "medico_id")
     private Usuario medico;
-
     @Column(name = "data_atendimento")
     private LocalDateTime dataAtendimento;
-
     // Campos do SOAP
     @Column(name = "subjetivo", columnDefinition = "TEXT")
     private String subjetivo; // S - Queixas e relatos do paciente
-
     @Column(name = "objetivo", columnDefinition = "TEXT")
     private String objetivo; // O - Exame físico e achados clínicos
-
     @Column(name = "avaliacao", columnDefinition = "TEXT")
     private String avaliacao; // A - Diagnóstico e avaliação clínica
-
     @Column(name = "plano", columnDefinition = "TEXT")
     private String plano; // P - Plano de tratamento e conduta
-
     // Campos de comorbidades que podem ser atualizados pelo médico
     @Column(name = "hipertensao")
     private Boolean hipertensaoArterialSistemica;
-
     @Column(name = "diabetes")
     private Boolean diabetes;
-
     @Column(name = "tuberculose")
     private Boolean tuberculose;
-
     @Column(name = "hanseniase")
     private Boolean hanseniase;
-
     @Column(name = "gestante")
     private Boolean gestante;
-
     @Column(name = "puperpera")
     private Boolean puperpera;
-
     @Column(name = "saude_mental")
     private Boolean saudeMental;
-
     @OneToOne(mappedBy = "prontuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private SinaisVitais sinaisVitais;
-
-
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
-
     // Campos por perfil profissional
     private String ciap;
     private String cip;             // Para médicos
     private String cipesc;          // Para enfermeiros
     private String cidOdontologico; // Para dentistas
-
     @Column(name = "ativo")
     private boolean ativo;
 
@@ -106,7 +86,7 @@ public class Prontuario {
         this.ativo = ativo;
     }
 
-    public Prontuario(ProntuarioRequestDTO dto) {
+    public Prontuario(ProntuarioRequestDTO dto, Paciente paciente, Usuario medico) {
         this.cdProntuario = dto.cdProntuario();
         this.subjetivo = dto.subjetivo();
         this.objetivo = dto.objetivo();
@@ -123,6 +103,8 @@ public class Prontuario {
         this.cip = dto.cip();
         this.cipesc = dto.cipesc();
         this.cidOdontologico = dto.cidOdontologico();
+        this.medico = medico;
+        this.paciente = paciente;
 
         if (dto.sinaisVitais() != null) {
             this.sinaisVitais = new SinaisVitais(dto.sinaisVitais());
