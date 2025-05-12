@@ -61,42 +61,12 @@ public class ProntuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarProntuario(@RequestBody ProntuarioRequestDTO dto, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            Long usuarioId = Long.parseLong(authentication.getName());
-            Usuario medico = usuarioRepository.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
-
-            // Montando prefixo baseado no tipo de profissional
-            String prefixoAvaliacao = medico.getRoles().stream()
-                    .map(Roles::getName)
-                    .map(String::toUpperCase)
-                    .filter(role -> List.of("MEDICO", "ENFERMEIRO", "DENTISTA", "EQUIPE_MULTIDICIPLINAR").contains(role))
-                    .map(role -> switch (role) {
-                        case "MEDICO" -> "[Médico] ";
-                        case "ENFERMEIRO" -> "[Enfermeiro] ";
-                        case "DENTISTA" -> "[Dentista] ";
-                        case "EQUIPE_MULTIDICIPLINAR" -> "[Equipe Multiprofissional] ";
-                        default -> "";
-                    })
-                    .findFirst()
-                    .orElse("[Outro Profissional] ");
-
-            String avaliacaoFinal = prefixoAvaliacao + (dto.avaliacao() == null ? "" : dto.avaliacao());
-
-            Prontuario prontuario = prontuarioService.criarProntuario(usuarioId, dto.pacienteId(), dto.subjetivo(), dto.objetivo(), avaliacaoFinal, dto.plano());
-            return new ResponseEntity<>(prontuario, HttpStatus.CREATED);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Erro ao criar prontuário");
-        }
+    public ResponseEntity<Prontuario> criarProntuario(@RequestBody ProntuarioRequestDTO data) {
+        var prontuario = new Prontuario(data);
+        prontuarioService.criarProntuario(prontuario);
+        return ResponseEntity.ok(prontuario);
     }
-    // Atualizar prontuário existente
+
     @PutMapping("/{id}")
     public ResponseEntity<Prontuario> atualizarProntuario(@PathVariable Long id, @RequestBody ProntuarioRequestDTO dto) {
         try {

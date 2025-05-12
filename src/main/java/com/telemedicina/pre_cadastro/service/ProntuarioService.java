@@ -50,30 +50,20 @@ public class ProntuarioService {
     }
 
     @Transactional
-    public Prontuario criarProntuario(Long medicoId, Long pacienteId, String subjetivo, String objetivo, String avaliacao, String plano) {
-        Optional<Usuario> medicoOpt = usuarioRepository.findById(medicoId);
-        Optional<Paciente> pacienteOpt = pacienteRepository.findById(pacienteId);
-
-        if (medicoOpt.isEmpty() || pacienteOpt.isEmpty()) {
-            throw new IllegalArgumentException("Médico ou paciente não encontrado.");
+    public Prontuario criarProntuario(Prontuario prontuario) {
+        var paciente = prontuario.getPaciente();
+        if (paciente != null){
+            prontuario.setDiabetes(Boolean.TRUE.equals(paciente.isDiabetes()));
+            prontuario.setHanseniase(Boolean.TRUE.equals(paciente.isHanseniase()));
+            prontuario.setSaudeMental(Boolean.TRUE.equals(paciente.isTranstornoMental()));
+            prontuario.setHipertensaoArterialSistemica(Boolean.TRUE.equals(paciente.isHipertensaoArterialSistemica()));
+            prontuario.setGestante(Boolean.TRUE.equals(paciente.getGestante()));
+            prontuario.setPuperpera(Boolean.TRUE.equals(paciente.getPuerperio()));
         }
-
-        Usuario medico = medicoOpt.get();
-        Paciente paciente = pacienteOpt.get();
-
-        Prontuario prontuario = new Prontuario();
-        prontuario.setMedico(medico);
-        prontuario.setPaciente(paciente);
-        prontuario.setDataAtendimento(LocalDateTime.now());
-        prontuario.setSubjetivo(subjetivo);
-        prontuario.setObjetivo(objetivo);
-        prontuario.setAvaliacao(avaliacao);
-        prontuario.setPlano(plano);
-        prontuario.setDataCriacao(LocalDateTime.now());
-        prontuario.setAtivo(true);  // Se for necessário, ajuste para ser verdadeiro por padrão
 
         return prontuarioRepository.save(prontuario);
     }
+
     @Transactional
     public Prontuario atualizarProntuario(Long id, ProntuarioRequestDTO dto) {
         Prontuario prontuario = buscarProntuario(id);

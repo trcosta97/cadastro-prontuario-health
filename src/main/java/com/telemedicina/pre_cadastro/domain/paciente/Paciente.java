@@ -99,10 +99,8 @@ public class Paciente {
     private Boolean gestante;
     @Column(name = "puerperio")
     private Boolean puerperio;
-    @Column(name = "saude_mental")
-    private Boolean saudeMental;
     // Teve diagnóstico de algum problema de saúde mental por algum profissional de saúde?  (Sim/Não)
-    @PrimaryKeyJoinColumn(name=" hasMentalIllness")
+    @Column(name=" hasMentalIllness")
     private Boolean transtornoMental;
 
     public Paciente(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, String sexo, String celular,
@@ -112,7 +110,7 @@ public class Paciente {
                     Boolean infoOrientacao, OrientacoesSexuais orientacaoSexual, Boolean infoIdentidadeGenero, IdentidadesGeneros identidadeGenero,
                     Boolean infoDeficiencia, Deficiencias deficiencia, Boolean planoSaude, Boolean comunidadeTradicional, Boolean menorQueDoisAnos,
                     Boolean hipertensaoArterialSistemica, Boolean diabetes, Boolean hanseniase, Boolean tuberculose, Boolean transtornoMental,
-                    Boolean puperpera, Boolean saudeMental, Boolean gestante, String cdProntuario) {
+                    Boolean puperpera, Boolean gestante, String cdProntuario) {
         this.id = id;
         this.cpf = cpf;
         this.nomeCompleto = nomeCompleto;
@@ -150,7 +148,6 @@ public class Paciente {
         this.tuberculose = tuberculose;
         this.transtornoMental = transtornoMental;
         this.puerperio = puperpera;
-        this.saudeMental = saudeMental;
         this.gestante = gestante;
         this.cdProntuario = cdProntuario;
     }
@@ -170,6 +167,10 @@ public class Paciente {
         this.cdProntuario = data.cdProntuario();
         this.puerperio = data.pueperia();
 
+    }
+
+    public Boolean isTranstornoMental() {
+        return transtornoMental;
     }
 
     public Long getId() {
@@ -461,6 +462,10 @@ public class Paciente {
     }
 
     public void setPuerperio(Boolean puerperio) {
+    }
+
+    public Boolean getPuerperio() {
+        return this.puerperio;
     }
 
     public Boolean getGestante() {

@@ -1,4 +1,5 @@
 package com.telemedicina.pre_cadastro.domain;
+import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import jakarta.persistence.*;
@@ -99,24 +100,27 @@ public class Prontuario {
         this.ativo = ativo;
     }
 
-    // Método para inicializar prontuário com as informações de comorbidades do usuário
-    public static Prontuario iniciarProntuario(Paciente paciente, Usuario medico) {
-        Prontuario prontuario = new Prontuario();
-        prontuario.setPaciente(paciente);
-        prontuario.setMedico(medico);
-        prontuario.setDataAtendimento(LocalDateTime.now());
-
-        // Preenchendo os campos de comorbidades com as informações do paciente
-        prontuario.setHipertensaoArterialSistemica(paciente.isHipertensaoArterialSistemica());
-        prontuario.setDiabetes(paciente.isDiabetes());
-        prontuario.setTuberculose(paciente.isTuberculose());
-        prontuario.setHanseniase(paciente.isHanseniase());
-
-        prontuario.setDataCriacao(LocalDateTime.now());
-        prontuario.setAtivo(true);
-
-        return prontuario;
+    public Prontuario(ProntuarioRequestDTO data) {
+        this.paciente = new Paciente();
+        this.paciente.setId(data.pacienteId());
+        this.cdProntuario = data.cdProntuario();
+        this.subjetivo = data.subjetivo();
+        this.objetivo = data.objetivo();
+        this.avaliacao = data.avaliacao();
+        this.plano = data.plano();
+        this.hipertensaoArterialSistemica = data.hipertensaoArterialSistemica();
+        this.diabetes = data.diabetes();
+        this.tuberculose = data.tuberculose();
+        this.hanseniase = data.hanseniase();
+        this.gestante = data.gestante();
+        this.puperpera = data.puperpera();
+        this.saudeMental = data.saudeMental();
+        this.ciap = data.ciap();
+        this.cip = data.cip();
+        this.cipesc = data.cipesc();
+        this.cidOdontologico = data.cidOdontologico();
     }
+
 
     // Getters e Setters
     public Long getId() {

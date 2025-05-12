@@ -410,7 +410,7 @@
         .catch(err => {
             console.error('Erro ao atualizar status do agendamento:', err);
             // Ainda mostramos que o prontuário foi salvo, mas indicamos o erro na atualização do agendamento
-            mostrarAlerta('Prontuário salvo com sucesso, mas houve um erro ao atualizar o status do agendamento.', 'alert-warning');
+            mostrarAlerta('Prontuário salvo com sucesso sem atualizar agendamentos.', 'alert-warning');
         });
     }
 
