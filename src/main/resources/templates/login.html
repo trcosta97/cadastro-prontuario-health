@@ -67,11 +67,31 @@
         .then(data => {
             console.log('Resposta de autenticação:', data);
 
-            // Armazenar o token JWT (adapte conforme o formato da sua resposta)
-            console.log('Token recebido:', data);
+            // Armazenar o token JWT
             const token = data.accessToken;
-;
+
+            // Garantir que as roles estejam em um formato de array antes de armazenar
+            let roles = data.roles;
+
+            // Se roles não for um array, converta-o para um array
+            if (roles && !Array.isArray(roles)) {
+                if (typeof roles === 'string') {
+                    // Se for uma string única, coloque-a em um array
+                    roles = [roles];
+                } else {
+                    // Se for outro formato, tente converter para array
+                    try {
+                        roles = Object.values(roles);
+                    } catch (e) {
+                        console.error("Erro ao processar roles:", e);
+                        roles = [];
+                    }
+                }
+            }
+
             localStorage.setItem('jwtToken', token);
+            localStorage.setItem('roles', JSON.stringify(roles));
+            console.log('Roles armazenadas:', JSON.stringify(roles));
 
             // Redirecionar para a página home
             window.location.href = '/home';

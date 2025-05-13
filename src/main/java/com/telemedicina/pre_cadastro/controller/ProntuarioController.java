@@ -2,12 +2,10 @@ package com.telemedicina.pre_cadastro.controller;
 
 import com.telemedicina.pre_cadastro.domain.dto.ProntuarioRequestDTO;
 import com.telemedicina.pre_cadastro.domain.Prontuario;
-import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
 import com.telemedicina.pre_cadastro.domain.paciente.Paciente;
 import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.PacienteRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;
-import com.telemedicina.pre_cadastro.service.PacienteService;
 import com.telemedicina.pre_cadastro.service.ProntuarioService;
 import com.telemedicina.pre_cadastro.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;

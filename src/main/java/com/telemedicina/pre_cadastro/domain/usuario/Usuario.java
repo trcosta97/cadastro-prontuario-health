@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.telemedicina.pre_cadastro.domain.dto.LoginRequestDTO;
 import com.telemedicina.pre_cadastro.domain.dto.SaveUsuarioDTO;
 import com.telemedicina.pre_cadastro.domain.Endereco;
-import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tb_users")

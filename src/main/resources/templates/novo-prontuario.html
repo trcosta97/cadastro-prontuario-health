@@ -47,7 +47,6 @@
         </div>
 
         <!-- Sinais vitais -->
-        <!-- Adicione após os campos de comorbidades -->
         <div class="form-group mt-3">
             <h5>Sinais Vitais</h5>
             <div class="row">
@@ -83,16 +82,10 @@
             <label for="avaliacao">Avaliação (Hipótese Diagnóstica)</label>
             <textarea class="form-control" id="avaliacao" rows="3"></textarea>
 
-            <!-- Seleção do perfil profissional -->
+            <!-- Perfil profissional (oculto, apenas exibição) -->
             <div class="form-group mt-2">
-                <label>Perfil Profissional:</label>
-                <select class="form-select" id="perfilProfissional" onchange="atualizarCamposAvaliacao()">
-                    <option value="">Selecione o perfil</option>
-                    <option value="MEDICO">Médico(a)</option>
-                    <option value="ENFERMEIRO">Enfermeiro(a)</option>
-                    <option value="DENTISTA">Dentista</option>
-                    <option value="MULTIDISCIPLINAR">Equipe Multidisciplinar</option>
-                </select>
+                <p><strong>Perfil Profissional:</strong> <span id="perfilProfissionalDisplay">Carregando...</span></p>
+                <input type="hidden" id="perfilProfissional" value="">
             </div>
 
             <!-- Campos específicos para cada perfil (inicialmente ocultos) -->
@@ -196,10 +189,22 @@
 <script>
     // Verificar se temos um agendamento ativo ao carregar a página
     let agendamentoAtualId = null;
+    let userRoles = [];
 
     document.addEventListener('DOMContentLoaded', function() {
         // Verificar se há ID de agendamento armazenado no localStorage
         agendamentoAtualId = localStorage.getItem('agendamentoAtualId');
+
+        // Carregar roles do usuário do localStorage
+        const rolesString = localStorage.getItem('roles');
+        if (rolesString) {
+            try {
+                userRoles = JSON.parse(rolesString);
+            } catch (e) {
+                console.error('Erro ao processar roles do localStorage:', e);
+                userRoles = [];
+            }
+        }
 
         // Verificar se temos um parâmetro de CPF na URL (vindo da página de agendamentos)
         const urlParams = new URLSearchParams(window.location.search);
@@ -212,25 +217,76 @@
         }
     });
 
-    function atualizarCamposAvaliacao() {
-        const perfil = document.getElementById('perfilProfissional').value;
+    // Função para verificar roles e determinar o perfil a ser exibido
+    function determinarPerfilProfissional() {
+        let perfil = '';
+        let perfilDisplay = '';
 
-        // Ocultar todos os campos específicos
-        document.getElementById('camposMedico').style.display = 'none';
-        document.getElementById('camposEnfermeiro').style.display = 'none';
-        document.getElementById('camposDentista').style.display = 'none';
-        document.getElementById('camposMultidisciplinar').style.display = 'none';
+        // Verificar se é ADMIN (pode fazer tudo)
+        if (userRoles.includes('ADMIN')) {
+            perfil = 'ADMIN';
+            perfilDisplay = 'Administrador (acesso completo)';
 
-        // Mostrar os campos específicos para o perfil selecionado
-        if (perfil === 'MEDICO') {
+            // Exibir todos os campos
             document.getElementById('camposMedico').style.display = 'block';
-        } else if (perfil === 'ENFERMEIRO') {
             document.getElementById('camposEnfermeiro').style.display = 'block';
-        } else if (perfil === 'DENTISTA') {
             document.getElementById('camposDentista').style.display = 'block';
-        } else if (perfil === 'MULTIDISCIPLINAR') {
             document.getElementById('camposMultidisciplinar').style.display = 'block';
+
+            return { perfil, perfilDisplay };
         }
+
+        // Caso não seja ADMIN, verificar outras roles e mostrar apenas os campos correspondentes
+        let camposMostrados = false;
+
+        if (userRoles.includes('MEDICO')) {
+            perfil = 'MEDICO';
+            perfilDisplay = 'Médico(a)';
+            document.getElementById('camposMedico').style.display = 'block';
+            camposMostrados = true;
+        }
+
+        if (userRoles.includes('EQUIPE_ENFERMAGEM')) {
+            if (perfil === '') {
+                perfil = 'ENFERMEIRO';
+                perfilDisplay = 'Enfermeiro(a)';
+            } else {
+                perfilDisplay += ' / Enfermeiro(a)';
+            }
+            document.getElementById('camposEnfermeiro').style.display = 'block';
+            camposMostrados = true;
+        }
+
+        if (userRoles.includes('DENTISTA')) {
+            if (perfil === '') {
+                perfil = 'DENTISTA';
+                perfilDisplay = 'Dentista';
+            } else {
+                perfilDisplay += ' / Dentista';
+            }
+            document.getElementById('camposDentista').style.display = 'block';
+            camposMostrados = true;
+        }
+
+        if (userRoles.includes('EQUIPE_MULTIDISCIPLINAR')) {
+            if (perfil === '') {
+                perfil = 'MULTIDISCIPLINAR';
+                perfilDisplay = 'Equipe Multidisciplinar';
+            } else {
+                perfilDisplay += ' / Equipe Multidisciplinar';
+            }
+            document.getElementById('camposMultidisciplinar').style.display = 'block';
+            camposMostrados = true;
+        }
+
+        // Se não tiver nenhuma role específica ou não mostrar nenhum campo
+        if (!camposMostrados) {
+            perfil = 'SEM_ACESSO';
+            perfilDisplay = 'Sem permissão para preencher prontuário';
+            mostrarAlerta('Seu perfil não tem permissão para preencher prontuários. Entre em contato com o administrador.', 'alert-danger');
+        }
+
+        return { perfil, perfilDisplay };
     }
 
     function buscarPaciente() {
@@ -276,46 +332,15 @@
             document.getElementById('dadosPaciente').style.display = 'block';
             document.getElementById('prontuarioForm').style.display = 'block';
 
-            // Verificar o perfil do usuário logado e preencher automaticamente
-            verificarPerfilUsuario(token);
+            // Determinar o perfil profissional baseado nas roles
+            const { perfil, perfilDisplay } = determinarPerfilProfissional();
+
+            // Atualizar o valor do campo oculto e o texto de exibição
+            document.getElementById('perfilProfissional').value = perfil;
+            document.getElementById('perfilProfissionalDisplay').textContent = perfilDisplay;
         })
         .catch(err => {
             alert(err.message);
-        });
-    }
-
-    function verificarPerfilUsuario(token) {
-        fetch(`http://localhost:8080/api/usuario/me`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Erro ao obter informações do usuário');
-            return res.json();
-        })
-        .then(data => {
-            // Verificar roles do usuário e selecionar o perfil correspondente
-            if (data.roles) {
-                const roles = data.roles.map(role => role.name);
-
-                if (roles.includes('MEDICO')) {
-                    document.getElementById('perfilProfissional').value = 'MEDICO';
-                } else if (roles.includes('ENFERMEIRO')) {
-                    document.getElementById('perfilProfissional').value = 'ENFERMEIRO';
-                } else if (roles.includes('DENTISTA')) {
-                    document.getElementById('perfilProfissional').value = 'DENTISTA';
-                } else if (roles.includes('EQUIPE_MULTIDICIPLINAR')) {
-                    document.getElementById('perfilProfissional').value = 'MULTIDISCIPLINAR';
-                }
-
-                // Atualizar campos visíveis
-                atualizarCamposAvaliacao();
-            }
-        })
-        .catch(err => {
-            console.error('Erro ao obter perfil do usuário:', err);
         });
     }
 
@@ -326,58 +351,120 @@
         const cdProntuario = document.getElementById('cdProntuario').value;
         const perfil = document.getElementById('perfilProfissional').value;
 
-        if (!perfil) {
-            alert('Selecione seu perfil profissional para continuar.');
+        if (perfil === 'SEM_ACESSO') {
+            alert('Você não tem permissão para salvar prontuários.');
             return;
         }
 
-        // Validar campos obrigatórios de acordo com o perfil
+        // Validar campos obrigatórios de acordo com o perfil e roles
         let camposValidos = true;
+        let mensagemErro = '';
 
-        if (perfil === 'MEDICO') {
-            if (!document.getElementById('ciap').value || !document.getElementById('cip').value) {
-                alert('Os campos CIAP e CIP são obrigatórios para médicos.');
+        // Para ADMIN precisamos verificar quais campos estão sendo usados
+        if (perfil === 'ADMIN') {
+            // Verificar todos os conjuntos de campos e validar os que estiverem preenchidos
+            // Iremos considerar que se pelo menos um campo de um conjunto estiver preenchido,
+            // os outros campos obrigatórios do mesmo conjunto devem ser preenchidos
+
+            const camposMedicoPreenchidos = document.getElementById('ciap').value || document.getElementById('cip').value;
+            const camposEnfermeiroPreenchidos = document.getElementById('ciapEnfermeiro').value || document.getElementById('cipesc').value;
+            const camposDentistaPreenchidos = document.getElementById('ciapDentista').value || document.getElementById('cidOdontologico').value;
+            const camposMultiPreenchidos = document.getElementById('ciapMulti').value;
+
+            if (camposMedicoPreenchidos) {
+                if (!document.getElementById('ciap').value || !document.getElementById('cip').value) {
+                    mensagemErro += 'Os campos CIAP e CIP são obrigatórios para médicos.\n';
+                    camposValidos = false;
+                }
+            }
+
+            if (camposEnfermeiroPreenchidos) {
+                if (!document.getElementById('ciapEnfermeiro').value || !document.getElementById('cipesc').value) {
+                    mensagemErro += 'Os campos CIAP e CIPESC são obrigatórios para enfermeiros.\n';
+                    camposValidos = false;
+                }
+            }
+
+            if (camposDentistaPreenchidos) {
+                if (!document.getElementById('ciapDentista').value || !document.getElementById('cidOdontologico').value) {
+                    mensagemErro += 'Os campos CIAP e CID Odontológico são obrigatórios para dentistas.\n';
+                    camposValidos = false;
+                }
+            }
+
+            // Pelo menos um conjunto de campos deve estar completamente preenchido
+            if (!camposMedicoPreenchidos && !camposEnfermeiroPreenchidos && !camposDentistaPreenchidos && !camposMultiPreenchidos) {
+                mensagemErro += 'Você deve preencher pelo menos um conjunto completo de campos de classificação.\n';
                 camposValidos = false;
             }
-        } else if (perfil === 'ENFERMEIRO') {
-            if (!document.getElementById('ciapEnfermeiro').value || !document.getElementById('cipesc').value) {
-                alert('Os campos CIAP e CIPESC são obrigatórios para enfermeiros.');
-                camposValidos = false;
+        } else {
+            // Para perfis específicos, validar apenas os campos correspondentes
+            if (userRoles.includes('MEDICO')) {
+                if (!document.getElementById('ciap').value || !document.getElementById('cip').value) {
+                    mensagemErro += 'Os campos CIAP e CIP são obrigatórios para médicos.\n';
+                    camposValidos = false;
+                }
             }
-        } else if (perfil === 'DENTISTA') {
-            if (!document.getElementById('ciapDentista').value || !document.getElementById('cidOdontologico').value) {
-                alert('Os campos CIAP e CID Odontológico são obrigatórios para dentistas.');
-                camposValidos = false;
+
+            if (userRoles.includes('EQUIPE_ENFERMAGEM')) {
+                if (!document.getElementById('ciapEnfermeiro').value || !document.getElementById('cipesc').value) {
+                    mensagemErro += 'Os campos CIAP e CIPESC são obrigatórios para enfermeiros.\n';
+                    camposValidos = false;
+                }
             }
-        } else if (perfil === 'MULTIDISCIPLINAR') {
-            if (!document.getElementById('ciapMulti').value) {
-                alert('O campo CIAP é obrigatório para profissionais da equipe multidisciplinar.');
-                camposValidos = false;
+
+            if (userRoles.includes('DENTISTA')) {
+                if (!document.getElementById('ciapDentista').value || !document.getElementById('cidOdontologico').value) {
+                    mensagemErro += 'Os campos CIAP e CID Odontológico são obrigatórios para dentistas.\n';
+                    camposValidos = false;
+                }
+            }
+
+            if (userRoles.includes('EQUIPE_MULTIDISCIPLINAR')) {
+                if (!document.getElementById('ciapMulti').value) {
+                    mensagemErro += 'O campo CIAP é obrigatório para profissionais da equipe multidisciplinar.\n';
+                    camposValidos = false;
+                }
             }
         }
 
-        if (!camposValidos) return;
+        if (!camposValidos) {
+            alert(mensagemErro);
+            return;
+        }
 
-        // Preparar os valores específicos conforme o perfil selecionado
+        // Preparar os valores específicos conforme as roles do usuário
         let ciapValue = '';
         let cipValue = '';
         let cipescValue = '';
         let cidOdontologicoValue = '';
 
-        if (perfil === 'MEDICO') {
+        // Se o usuário tem múltiplas roles, coletamos todos os valores preenchidos
+        if (userRoles.includes('MEDICO') || (perfil === 'ADMIN' && document.getElementById('ciap').value)) {
             ciapValue = document.getElementById('ciap').value;
             cipValue = document.getElementById('cip').value;
-        } else if (perfil === 'ENFERMEIRO') {
-            ciapValue = document.getElementById('ciapEnfermeiro').value;
-            cipescValue = document.getElementById('cipesc').value;
-        } else if (perfil === 'DENTISTA') {
-            ciapValue = document.getElementById('ciapDentista').value;
-            cidOdontologicoValue = document.getElementById('cidOdontologico').value;
-        } else if (perfil === 'MULTIDISCIPLINAR') {
-            ciapValue = document.getElementById('ciapMulti').value;
         }
 
+        if (userRoles.includes('ENFERMEIRO') || (perfil === 'ADMIN' && document.getElementById('ciapEnfermeiro').value)) {
+            // Se já temos um CIAP de outro perfil, apenas usamos o CIPESC daqui
+            cipescValue = document.getElementById('cipesc').value;
+            if (ciapValue === '') {
+                ciapValue = document.getElementById('ciapEnfermeiro').value;
+            }
+        }
 
+        if (userRoles.includes('DENTISTA') || (perfil === 'ADMIN' && document.getElementById('ciapDentista').value)) {
+            cidOdontologicoValue = document.getElementById('cidOdontologico').value;
+            if (ciapValue === '') {
+                ciapValue = document.getElementById('ciapDentista').value;
+            }
+        }
+
+        if (userRoles.includes('EQUIPE_MULTIDICIPLINAR') || (perfil === 'ADMIN' && document.getElementById('ciapMulti').value)) {
+            if (ciapValue === '') {
+                ciapValue = document.getElementById('ciapMulti').value;
+            }
+        }
 
         const prontuarioData = {
             pacienteId: +pacienteId,
@@ -398,11 +485,11 @@
             cipesc: cipescValue,
             cidOdontologico: cidOdontologicoValue,
             sinaisVitais: {
-            pressaoArterial: document.getElementById('pressaoArterial').value,
-            frequenciaRespiratoria: document.getElementById('frequenciaRespiratoria').value ? +document.getElementById('frequenciaRespiratoria').value : null,
-            frequenciaCardiaca: document.getElementById('frequenciaCardiaca').value ? +document.getElementById('frequenciaCardiaca').value : null,
-            temperatura: document.getElementById('temperatura').value ? +document.getElementById('temperatura').value : null,
-            escalaDor: document.getElementById('escalaDor').value ? +document.getElementById('escalaDor').value : null
+                pressaoArterial: document.getElementById('pressaoArterial').value,
+                frequenciaRespiratoria: document.getElementById('frequenciaRespiratoria').value ? +document.getElementById('frequenciaRespiratoria').value : null,
+                frequenciaCardiaca: document.getElementById('frequenciaCardiaca').value ? +document.getElementById('frequenciaCardiaca').value : null,
+                temperatura: document.getElementById('temperatura').value ? +document.getElementById('temperatura').value : null,
+                escalaDor: document.getElementById('escalaDor').value ? +document.getElementById('escalaDor').value : null
             }
         };
 

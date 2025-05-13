@@ -1,6 +1,6 @@
 package com.telemedicina.pre_cadastro.service;
 
-import com.telemedicina.pre_cadastro.domain.paciente.Enums.Roles;
+import com.telemedicina.pre_cadastro.domain.usuario.Roles;
 import com.telemedicina.pre_cadastro.domain.usuario.Usuario;
 import com.telemedicina.pre_cadastro.repository.RoleRepository;
 import com.telemedicina.pre_cadastro.repository.UsuarioRepository;

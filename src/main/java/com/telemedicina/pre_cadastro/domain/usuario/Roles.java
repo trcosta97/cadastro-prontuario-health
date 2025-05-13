@@ -1,4 +1,4 @@
-package com.telemedicina.pre_cadastro.domain.paciente.Enums;
+package com.telemedicina.pre_cadastro.domain.usuario;
 
 
 import jakarta.persistence.*;
@@ -29,6 +29,8 @@ public class Roles {
         this.name = name;
     }
 
+
+
     public enum Values {
         ADMIN(1L),
         USUARIO(2L),
@@ -51,6 +53,8 @@ public class Roles {
         public long getRoleId() {
             return roleId;
         }
+
+
     }
 }
 
