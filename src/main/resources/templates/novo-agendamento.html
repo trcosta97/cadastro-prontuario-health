@@ -66,6 +66,7 @@
                             </div>
                         </div>
 
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="cpfMedico" class="form-label">CPF do Médico</label>
@@ -83,6 +84,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="tipoAgendamento" class="form-label">Tipo de Agendamento</label>
+                            <select class="form-select" id="tipoAgendamento" name="tipoAgendamento" required>
+                                <option value="PRESENCIAL" selected>Presencial</option>
+                                <option value="TELEMEDICINA">Telemedicina</option>
+                            </select>
+                        </div>
+
 
                         <div class="mb-3">
                             <label for="observacao" class="form-label">Observação</label>
@@ -140,8 +149,10 @@
                 cpfPaciente: cpfPaciente,
                 cpfMedico: cpfMedico,
                 statusAgendamento: document.getElementById('statusAgendamento').value,
+                tipoAgendamento: document.getElementById('tipoAgendamento').value, // <-- NOVA LINHA
                 observacao: document.getElementById('observacao').value
             };
+
 
             // Obter o token do localStorage
             const token = localStorage.getItem('jwtToken');

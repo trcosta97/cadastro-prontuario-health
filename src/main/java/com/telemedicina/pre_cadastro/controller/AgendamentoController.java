@@ -3,6 +3,7 @@ package com.telemedicina.pre_cadastro.controller;
 
 import com.telemedicina.pre_cadastro.domain.agendamento.Agendamento;
 import com.telemedicina.pre_cadastro.domain.dto.AgendamentoRequestDTO;
+import com.telemedicina.pre_cadastro.domain.dto.AgendamentoResponseDTO;
 import com.telemedicina.pre_cadastro.service.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,11 @@ public class AgendamentoController {
 
 
     @PostMapping
-    public ResponseEntity<Agendamento> agendarConsulta(@RequestBody AgendamentoRequestDTO data, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<AgendamentoResponseDTO> agendarConsulta(@RequestBody AgendamentoRequestDTO data, UriComponentsBuilder uriBuilder) {
         var newAgendamento = agendamentoService.save(data);
+        var response = new AgendamentoResponseDTO(newAgendamento);
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(newAgendamento.getId()).toUri();
-        return ResponseEntity.created(uri).body(newAgendamento);
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/medico/{cpf}")

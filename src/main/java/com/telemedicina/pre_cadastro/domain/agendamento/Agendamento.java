@@ -24,11 +24,13 @@ public class Agendamento {
     private Usuario medico;
     private StatusAgendamento statusAgendamento;
     private String observacao;
+    private TipoAgendamento tipo;
 
     public Agendamento(AgendamentoRequestDTO data) {
         this.dataHora = data.dataHora();
         this.statusAgendamento = data.statusAgendamento();
         this.observacao = data.observacao();
+        this.tipo = data.tipoAgendamento();
     }
 
     public Agendamento() {
@@ -80,5 +82,12 @@ public class Agendamento {
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public TipoAgendamento getTipo() {
+        return tipo;
+    }
+    public void setTipo(TipoAgendamento tipo) {
+        this.tipo = tipo;
     }
 }
