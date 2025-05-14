@@ -51,7 +51,7 @@ public class Prontuario {
     @JsonManagedReference
     private SinaisVitais sinaisVitais;
     @Column(name = "data_criacao")
-    private LocalDateTime dataCriacao;
+    private LocalDateTime dataCriacao = LocalDateTime.now();
     // Campos por perfil profissional
     private String ciap;
     private String cip;             // Para médicos
@@ -59,6 +59,7 @@ public class Prontuario {
     private String cidOdontologico; // Para dentistas
     @Column(name = "ativo")
     private boolean ativo;
+
 
 
     public Prontuario() {

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Agendamentos e Prontuários</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DatePicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .card-dashboard {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .card-dashboard:hover {
+            transform: translateY(-5px);
+        }
+        .card-counter {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+        .date-range-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        #error-alert {
+            display: none;
+            margin-top: 20px;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Dashboard de Análise</h1>
+
+    <div class="date-range-container">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="data-inicio" placeholder="Data Início">
+                    <label for="data-inicio">Data Início</label>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="data-fim" placeholder="Data Fim">
+                    <label for="data-fim">Data Fim</label>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button id="btn-buscar" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="error-alert" class="alert alert-danger" role="alert">
+        Ocorreu um erro ao buscar os dados. Verifique se você está autenticado.
+    </div>
+
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-2">Carregando dados...</p>
+    </div>
+
+    <div class="row" id="resultado-container">
+        <div class="col-md-6">
+            <div class="card card-dashboard bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total de Agendamentos</h5>
+                    <p class="card-counter" id="total-agendamentos">0</p>
+                    <p class="card-text">no período selecionado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-dashboard bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total de Prontuários</h5>
+                    <p class="card-counter" id="total-prontuarios">0</p>
+                    <p class="card-text">no período selecionado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            Histórico de Consultas
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Período</th>
+                    <th>Agendamentos</th>
+                    <th>Prontuários</th>
+                    <th>Data da Consulta</th>
+                </tr>
+                </thead>
+                <tbody id="historico-tbody">
+                <!-- Histórico será preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- DatePicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar DatePicker
+        flatpickr("#data-inicio", {
+            dateFormat: "Y-m-d",
+            locale: "pt",
+            maxDate: "today"
+        });
+
+        flatpickr("#data-fim", {
+            dateFormat: "Y-m-d",
+            locale: "pt",
+            maxDate: "today"
+        });
+
+        // Definir datas iniciais (mês atual)
+        const hoje = new Date();
+        const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+
+        document.getElementById('data-inicio').value = formatarData(primeiroDiaMes);
+        document.getElementById('data-fim').value = formatarData(hoje);
+
+        // Buscar dados iniciais
+        buscarDados();
+
+        // Adicionar evento ao botão de busca
+        document.getElementById('btn-buscar').addEventListener('click', buscarDados);
+
+        // Verificar se o token JWT está presente
+        verificarAutenticacao();
+    });
+
+    function verificarAutenticacao() {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            document.getElementById('error-alert').textContent = 'Você não está autenticado. Faça login para continuar.';
+            document.getElementById('error-alert').style.display = 'block';
+            document.getElementById('btn-buscar').disabled = true;
+        }
+    }
+
+    function formatarData(data) {
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const dia = String(data.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function formatarDataExibicao(dataString) {
+        const partes = dataString.split('-');
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function buscarDados() {
+        const dataInicio = document.getElementById('data-inicio').value;
+        const dataFim = document.getElementById('data-fim').value;
+
+        if (!dataInicio || !dataFim) {
+            alert('Por favor, selecione as datas de início e fim.');
+            return;
+        }
+
+        // Mostrar spinner de carregamento
+        document.querySelector('.loading-spinner').style.display = 'block';
+
+        // Esconder mensagem de erro (se existir)
+        document.getElementById('error-alert').style.display = 'none';
+
+        // Obter token JWT do localStorage
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        if (!jwtToken) {
+            document.getElementById('error-alert').textContent = 'Token de autenticação não encontrado. Faça login novamente.';
+            document.getElementById('error-alert').style.display = 'block';
+            document.querySelector('.loading-spinner').style.display = 'none';
+            return;
+        }
+
+        // Fazer requisição para o endpoint
+        fetch(`/api/analytics/count?dataInicio=${dataInicio}&dataFim=${dataFim}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao buscar dados: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Atualizar contadores
+            document.getElementById('total-agendamentos').textContent = data.totalAgendamentos;
+            document.getElementById('total-prontuarios').textContent = data.totalProntuarios;
+
+            // Adicionar ao histórico
+            adicionarAoHistorico(dataInicio, dataFim, data.totalAgendamentos, data.totalProntuarios);
+
+            // Esconder spinner
+            document.querySelector('.loading-spinner').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            document.getElementById('error-alert').textContent = error.message;
+            document.getElementById('error-alert').style.display = 'block';
+            document.querySelector('.loading-spinner').style.display = 'none';
+        });
+    }
+
+    function adicionarAoHistorico(dataInicio, dataFim, totalAgendamentos, totalProntuarios) {
+        const tbody = document.getElementById('historico-tbody');
+        const dataHoje = new Date();
+
+        const novaLinha = document.createElement('tr');
+        novaLinha.innerHTML = `
+            <td>${formatarDataExibicao(dataInicio)} a ${formatarDataExibicao(dataFim)}</td>
+            <td>${totalAgendamentos}</td>
+            <td>${totalProntuarios}</td>
+            <td>${dataHoje.toLocaleString()}</td>
+        `;
+
+        // Adicionar no topo da tabela
+        if (tbody.firstChild) {
+            tbody.insertBefore(novaLinha, tbody.firstChild);
+        } else {
+            tbody.appendChild(novaLinha);
+        }
+
+        // Limitar histórico a 10 entradas
+        while (tbody.children.length > 10) {
+            tbody.removeChild(tbody.lastChild);
+        }
+
+        // Salvar histórico no localStorage
+        salvarHistorico();
+    }
+
+    function salvarHistorico() {
+        const tbody = document.getElementById('historico-tbody');
+        const historico = [];
+
+        for (let i = 0; i < tbody.children.length; i++) {
+            const row = tbody.children[i];
+            historico.push({
+                periodo: row.cells[0].textContent,
+                agendamentos: row.cells[1].textContent,
+                prontuarios: row.cells[2].textContent,
+                dataConsulta: row.cells[3].textContent
+            });
+        }
+
+        localStorage.setItem('historicoAnalytics', JSON.stringify(historico));
+    }
+
+    function carregarHistorico() {
+        const historicoSalvo = localStorage.getItem('historicoAnalytics');
+        if (historicoSalvo) {
+            const historico = JSON.parse(historicoSalvo);
+            const tbody = document.getElementById('historico-tbody');
+
+            // Limpar tabela atual
+            tbody.innerHTML = '';
+
+            // Adicionar itens do histórico
+            historico.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.periodo}</td>
+                    <td>${item.agendamentos}</td>
+                    <td>${item.prontuarios}</td>
+                    <td>${item.dataConsulta}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    }
+
+    // Carregar histórico quando a página carregar
+    window.addEventListener('load', carregarHistorico);
+</script>
+</body>
+</html>

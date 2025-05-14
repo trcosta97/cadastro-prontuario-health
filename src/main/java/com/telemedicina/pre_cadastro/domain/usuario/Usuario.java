@@ -21,6 +21,9 @@ public class Usuario {
     private Long id;
     //Campos de pré-cadastro
     private String cpf;
+    private String crm;
+    private String cro;
+    private String coren;
     @Column(name = "fullname")
     private String nomeCompleto;
     @Column(name = "email")
@@ -69,6 +72,9 @@ public class Usuario {
         this.password = data.senha();
         this.email = data.email();
         this.endereco = new Endereco(data.endereco());
+        this.crm = data.crm();
+        this.crm = data.cro();
+        this.crm = data.coren();
     }
 
     public Long getId() {
@@ -179,5 +185,29 @@ public class Usuario {
 
     public void setRole(Set<Roles> adminRole) {
         this.roles = adminRole;
+    }
+
+    public String getCrm() {
+        return crm;
+    }
+
+    public void setCrm(String crm) {
+        this.crm = crm;
+    }
+
+    public String getCro() {
+        return cro;
+    }
+
+    public void setCro(String cro) {
+        this.cro = cro;
+    }
+
+    public String getCoren() {
+        return coren;
+    }
+
+    public void setCoren(String coren) {
+        this.coren = coren;
     }
 }

@@ -71,6 +71,9 @@ public class PaginasController {
         return "nova-declaracao";
     }
 
+    @GetMapping("/dashboard/analytics")
+    public String analyticsPage() {return "novo-relatorio";}
+
 
 
 

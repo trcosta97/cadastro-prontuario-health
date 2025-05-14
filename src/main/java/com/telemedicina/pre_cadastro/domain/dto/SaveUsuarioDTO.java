@@ -15,6 +15,15 @@ public record SaveUsuarioDTO(
         @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos numéricos")
         String cpf,
 
+
+        String crm,
+
+
+        String cro,
+
+
+        String coren,
+
         @NotNull(message = "A data de nascimento é obrigatória")
         @Past(message = "A data de nascimento deve ser no passado")
         LocalDate dataNascimento,

@@ -25,6 +25,7 @@ public class Agendamento {
     private StatusAgendamento statusAgendamento;
     private String observacao;
     private TipoAgendamento tipo;
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
     public Agendamento(AgendamentoRequestDTO data) {
         this.dataHora = data.dataHora();
@@ -89,5 +90,13 @@ public class Agendamento {
     }
     public void setTipo(TipoAgendamento tipo) {
         this.tipo = tipo;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }
