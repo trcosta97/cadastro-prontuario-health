@@ -70,4 +70,10 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
+    public Usuario buscarPorCpf(String cpf){
+        return  repository.findByCpf(cpf);
+
+    }
+
+
 }
