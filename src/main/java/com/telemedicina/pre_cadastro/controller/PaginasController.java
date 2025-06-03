@@ -74,6 +74,9 @@ public class PaginasController {
     @GetMapping("/dashboard/analytics")
     public String analyticsPage() {return "novo-relatorio";}
 
+    @GetMapping("/atestado")
+    public String atestado() {return "atestado";}
+
 
 
 
