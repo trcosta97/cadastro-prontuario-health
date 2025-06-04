@@ -53,8 +53,12 @@ public class PaginasController {
         return "todos-pacientes";
     }
 
-    @GetMapping("/paciente/{id}")
-    public String detalhesPaciente(@PathVariable Long id) {
+    @GetMapping({"/paciente/{id}", "/paciente"})
+    public String detalhesPaciente(@PathVariable(required = false) Long id) {
+        if (id == null) {
+            // Redireciona para a lista de pacientes se não houver id
+            return "redirect:/todos-pacientes";
+        }
         return "detalhes-paciente";
     }
 
@@ -76,6 +80,9 @@ public class PaginasController {
 
     @GetMapping("/atestado")
     public String atestado() {return "atestado";}
+
+
+
 
 
 

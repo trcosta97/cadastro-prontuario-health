@@ -142,6 +142,8 @@
           <strong>E-mail:</strong> ${paciente.email || "(sem e-mail)"}<br>
           ${condicoesSaudeHtml}
           <a href="paciente/${paciente.id || ''}">[Ver Detalhes]</a>
+
+
           <a href="completar-cadastro?id=${paciente.id || ''}" class="ms-2">[Completar/Atualizar Cadastro]</a>
 
         `;

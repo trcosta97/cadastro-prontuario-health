@@ -299,10 +299,13 @@
 
 <script>
     // Função para obter o ID do paciente da URL
-    function getPatientIdFromUrl() {
-        const pathParts = window.location.pathname.split('/');
-        return pathParts[pathParts.length - 1];
-    }
+   function getPatientIdFromUrl() {
+    const pathParts = window.location.pathname.split('/');
+    return pathParts[pathParts.length - 1];
+}
+
+
+
 
     // Função para formatar datas
     function formatDate(dateString) {
