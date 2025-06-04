@@ -609,7 +609,7 @@
 
     // Função para marcar o agendamento como realizado
     function marcarAgendamentoComoRealizado(agendamentoId, token) {
-        fetch(`http://localhost:8080/api/agendamentos/${agendamentoId}/realizado`, {
+        fetch(`http://localhost:8080/api/agendamento/${agendamentoId}/realizado`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
