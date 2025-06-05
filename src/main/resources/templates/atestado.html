@@ -79,6 +79,37 @@
                     pdf.save('atestado_medico.pdf');
                 });
             });
+
+            // NOVO: Salvar atestado no banco via AJAX
+            $('#atestadoForm').on('submit', function(event) {
+                event.preventDefault();
+
+                // Monte o objeto conforme o esperado pelo backend
+                const data = {
+                    pacienteId: $('#pacienteId').val(),
+                    dataInicio: $('#dataInicio').val(),
+                    duracaoDias: $('#duracao').val()
+                    // Adicione outros campos conforme o DTO se necessário
+                };
+
+                // Se precisar de autenticação, recupere o token JWT do localStorage
+                const token = localStorage.getItem('jwtToken');
+$.ajax({
+    url: 'http://localhost:8080/api/atestado',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+    success: function(response) {
+        alert('Atestado salvo com sucesso!');
+        // Redirecione ou limpe o formulário se desejar
+    },
+    error: function(xhr, status, error) {
+        alert('Erro ao salvar atestado: ' + xhr.responseText);
+    }
+});
+
+            });
         });
     </script>
 </head>
@@ -118,19 +149,20 @@
                 </div>
                 <div class="form-group">
                     <label for="motivo">Motivo</label>
-                    <textarea class="form-control" id="motivo" rows="3" placeholder="Descreva o motivo do atestado"></textarea>
+                    <textarea class="form-control" id="motivo" rows="3"
+                              placeholder="Descreva o motivo do atestado"></textarea>
                 </div>
                 <div class="d-flex gap-5 mb-3">
                     <button type="button" id="gerarPDF" class="btn btn-primary mr-2">
                         Gerar Atestado PDF
                     </button>
+                    <button type="submit" class="btn btn-success ml-2 mr-2">
+                        Salvar Atestado
+                    </button>
                     <a href="/home" class="btn btn-secondary">
                         &larr; Voltar para a Home
                     </a>
                 </div>
-
-
-
             </form>
         </div>
         <div class="col-md-6">
@@ -147,8 +179,10 @@
                     <p style="text-align: justify; margin-bottom: 30px;">
                         Atesto para os devidos fins que <strong><span id="previewNome"></span></strong>,
                         portador(a) do CPF <strong><span id="previewCPF"></span></strong>,
-                        encontra-se sob meus cuidados médicos e necessita de <strong><span id="previewDuracao"></span> dia(s)</strong>
-                        de afastamento de suas atividades, a contar de <strong><span id="previewDataInicio"></span></strong>.
+                        encontra-se sob meus cuidados médicos e necessita de <strong><span id="previewDuracao"></span>
+                        dia(s)</strong>
+                        de afastamento de suas atividades, a contar de <strong><span
+                            id="previewDataInicio"></span></strong>.
                     </p>
                     <p style="margin-bottom: 30px;">
                         <strong>Motivo:</strong><br>
