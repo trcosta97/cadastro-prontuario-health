@@ -1,9 +1,11 @@
 package com.telemedicina.pre_cadastro.domain.dto;
 
+import com.telemedicina.pre_cadastro.domain.usuario.Roles;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public record SaveUsuarioDTO(
 
@@ -46,6 +48,8 @@ public record SaveUsuarioDTO(
 
         @NotNull(message = "O endereço é obrigatório")
         @Valid
-        SaveEnderecoRequestDTO endereco
+        SaveEnderecoRequestDTO endereco,
+
+        Set<Long> rolesIds
 
 ) {}

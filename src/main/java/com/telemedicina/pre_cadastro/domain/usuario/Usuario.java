@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tb_users")
-public class Usuario {
+public class    Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
