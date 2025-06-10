@@ -81,6 +81,12 @@ public class PaginasController {
     @GetMapping("/atestado")
     public String atestado() {return "atestado";}
 
+    @GetMapping("/documentos")
+    public String documentos() {return "documentos";}
+
+    @GetMapping("/outros-documentos")
+    public String outrosDocumentos() {return "outros-documentos";}
+
 
 
 

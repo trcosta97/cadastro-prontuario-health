@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atestado e Declaração</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <style>
+    .hidden { display: none; }
+    #previewContainer { min-height: 600px; }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+
+        <a href="/outros-documentos" class="btn btn-primary btn-action ">Outros Documentos</a>
+
+      <button id="btnSwitch" class="btn btn-info">Alternar para Declaração</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Formulário de Atestado -->
+      <div id="formAtestado">
+        <h2>Gerar Atestado Médico</h2>
+        <form id="atestadoForm">
+          <div class="form-group">
+            <label for="nomeInstituicao">Nome da Instituição</label>
+            <input type="text" class="form-control" id="nomeInstituicao" required>
+          </div>
+          <div class="form-group">
+            <label for="cidade">Cidade</label>
+            <input type="text" class="form-control" id="cidade" required>
+          </div>
+          <div class="form-group">
+            <label for="pacienteId">Paciente ID</label>
+            <input type="number" class="form-control" id="pacienteId" required>
+          </div>
+          <div class="form-group">
+            <label for="nomePaciente">Nome do Paciente</label>
+            <input type="text" class="form-control" id="nomePaciente" required>
+          </div>
+          <div class="form-group">
+            <label for="cpfPaciente">CPF do Paciente</label>
+            <input type="text" class="form-control" id="cpfPaciente" placeholder="000.000.000-00" required>
+          </div>
+          <div class="form-group">
+            <label for="duracao">Duração (dias)</label>
+            <input type="number" class="form-control" id="duracao" required>
+          </div>
+          <div class="form-group">
+            <label for="dataInicio">Data de Início</label>
+            <input type="date" class="form-control" id="dataInicio" required>
+          </div>
+          <div class="form-group">
+            <label for="motivo">Motivo</label>
+            <textarea class="form-control" id="motivo" rows="3" placeholder="Descreva o motivo do atestado"></textarea>
+          </div>
+          <div class="d-flex gap-5 mb-3">
+            <button type="button" id="gerarPDFAtestado" class="btn btn-primary mr-2">Gerar Atestado PDF</button>
+            <button type="submit" class="btn btn-success ml-2 mr-2">Salvar Atestado</button>
+            <a href="/home" class="btn btn-secondary">&larr; Voltar para a Home</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Formulário de Declaração -->
+      <div id="formDeclaracao" class="hidden">
+        <h2>Criar Nova Declaração</h2>
+        <form id="declaracaoForm">
+          <div class="form-group">
+            <label for="pacienteIdDec">Paciente ID</label>
+            <input type="number" class="form-control" id="pacienteIdDec" required>
+          </div>
+          <div class="form-group">
+            <label for="nomePacienteDec">Nome do Paciente</label>
+            <input type="text" class="form-control" id="nomePacienteDec" required>
+          </div>
+          <div class="form-group">
+            <label for="rgPaciente">RG do Paciente</label>
+            <input type="text" class="form-control" id="rgPaciente" required>
+          </div>
+          <div class="form-group">
+            <label for="entrada">Entrada</label>
+            <input type="datetime-local" class="form-control" id="entrada" required>
+          </div>
+          <div class="form-group">
+            <label for="saida">Saída</label>
+            <input type="datetime-local" class="form-control" id="saida" required>
+          </div>
+          <div class="form-group">
+            <label>Motivos</label><br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="motivoConsulta" value="CONSULTA">
+              <label class="form-check-label" for="motivoConsulta">Consulta</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="motivoExame" value="REALIZACAO_DE_EXAMES">
+              <label class="form-check-label" for="motivoExame">Realização de Exames</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="motivoOutro" value="OUTROS">
+              <label class="form-check-label" for="motivoOutro">Outros</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cidadeDec">Cidade</label>
+            <input type="text" class="form-control" id="cidadeDec" required>
+          </div>
+          <div class="form-group">
+            <label for="nomeInstituicaoDec">Nome da Instituição</label>
+            <input type="text" class="form-control" id="nomeInstituicaoDec" required>
+          </div>
+          <div class="d-flex gap-5 mb-3">
+            <button type="button" id="gerarPDFDeclaracao" class="btn btn-primary mr-2">Gerar Declaração PDF</button>
+            <button type="submit" class="btn btn-success ml-2 mr-2">Salvar Declaração</button>
+            <a href="/home" class="btn btn-secondary">&larr; Voltar para a Home</a>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div id="previewAtestado" style="border: 1px solid #dee2e6; padding: 20px; min-height: 600px;">
+        <h4 class="mb-3">Prévia do Atestado</h4>
+        <div id="pdfTemplateAtestado">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <strong><span id="previewInstituicao"></span></strong><br>
+            Cidade: <span id="previewCidade"></span>
+          </div>
+          <div style="text-align: center; font-weight: bold; margin-bottom: 30px; font-size: 18px;">
+            ATESTADO MÉDICO
+          </div>
+          <p style="text-align: justify; margin-bottom: 30px;">
+            Atesto para os devidos fins que <strong><span id="previewNome"></span></strong>,
+            portador(a) do CPF <strong><span id="previewCPF"></span></strong>,
+            encontra-se sob meus cuidados médicos e necessita de <strong><span id="previewDuracao"></span>
+            dia(s)</strong>
+            de afastamento de suas atividades, a contar de <strong><span
+                  id="previewDataInicio"></span></strong>.
+          </p>
+          <p style="margin-bottom: 30px;">
+            <strong>Motivo:</strong><br>
+            <span id="previewMotivo">_____________________________</span>
+          </p>
+          <div style="margin-bottom: 60px;">
+            <span id="previewCidadeFooter"></span>, <span id="previewDataHoraHoje"></span>.
+          </div>
+          <div style="text-align: center;">
+            ___________________________________________<br>
+            Assinatura e CRM do Médico
+          </div>
+        </div>
+      </div>
+      <div id="previewDeclaracao" class="hidden" style="border: 1px solid #dee2e6; padding: 20px; min-height: 600px;">
+        <h4 class="mb-3">Prévia da Declaração</h4>
+        <div id="pdfTemplateDeclaracao">
+          <div style="text-align: center; margin-bottom: 20px; color: #ff0000; font-weight: bold;">
+            <span id="previewInstituicaoDec">Inserir logo e nome da instituição</span>
+          </div>
+          <div style="text-align: center; font-weight: bold; margin-bottom: 30px;">
+            DECLARAÇÃO DE COMPARECIMENTO
+          </div>
+          <p style="text-align: justify; margin-bottom: 30px;">
+            Declaro para os devidos fins que
+            <span id="previewNomeDec" style="text-decoration: underline; padding: 0 5px;"></span>,
+            portador(a) do RG
+            <span id="previewRG" style="text-decoration: underline; padding: 0 5px;"></span>
+            compareceu a este serviço de saúde, na data
+            <span id="previewData" style="text-decoration: underline; padding: 0 5px;"></span>
+            das <span id="previewHoraEntrada" style="text-decoration: underline; color: #ff0000;"></span>
+            às <span id="previewHoraSaida" style="text-decoration: underline; color: #ff0000;"></span>,
+            por motivo de:
+          </p>
+          <div style="margin-left: 20px; margin-bottom: 40px;">
+            <div>
+              <input type="checkbox" id="previewConsulta" disabled> Consulta
+            </div>
+            <div>
+              <input type="checkbox" id="previewExame" disabled> Realização de exames
+            </div>
+            <div>
+              <input type="checkbox" id="previewOutro" disabled> Outros
+            </div>
+          </div>
+          <div style="margin-bottom: 60px;">
+            <span id="previewCidadeDec" style="text-decoration: underline;"></span>,
+            <span id="previewDia" style="text-decoration: underline;"></span> de
+            <span id="previewMes" style="text-decoration: underline;"></span> de
+            <span id="previewAno" style="text-decoration: underline;"></span>.
+          </div>
+          <div style="text-align: center; margin-bottom: 10px;">
+            <div style="border-top: 1px solid #000; display: inline-block; width: 70%; padding-top: 5px;">
+              Assinatura do(a) profissional e conselho de classe (se houver)
+            </div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 0.8em;">
+              ou número de registro (profissional de recepção)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+      // Funções genéricas para formatação
+      function formatarData(dataString) {
+          const data = new Date(dataString);
+          const dia = String(data.getDate()).padStart(2, '0');
+          const mes = String(data.getMonth() + 1).padStart(2, '0');
+          const ano = data.getFullYear();
+          return `${dia}/${mes}/${ano}`;
+      }
+      function formatarDataHora(data) {
+          const dia = String(data.getDate()).padStart(2, '0');
+          const mes = String(data.getMonth() + 1).padStart(2, '0');
+          const ano = data.getFullYear();
+          const horas = String(data.getHours()).padStart(2, '0');
+          const minutos = String(data.getMinutes()).padStart(2, '0');
+          return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+      }
+      function formatarHora(dataString) {
+          const data = new Date(dataString);
+          const hora = data.getHours().toString().padStart(2, '0');
+          const minuto = data.getMinutes().toString().padStart(2, '0');
+          return `${hora}h${minuto}`;
+      }
+      function getNomeMes(dataString) {
+          const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+          const data = new Date(dataString);
+          return meses[data.getMonth()];
+      }
+
+      // Alternar entre Atestado e Declaração
+      $('#btnSwitch').on('click', function() {
+          if ($('#formAtestado').hasClass('hidden')) {
+              $('#formAtestado').removeClass('hidden');
+              $('#formDeclaracao').addClass('hidden');
+              $('#previewAtestado').removeClass('hidden');
+              $('#previewDeclaracao').addClass('hidden');
+              $(this).text('Alternar para Declaração');
+          } else {
+              $('#formAtestado').addClass('hidden');
+              $('#formDeclaracao').removeClass('hidden');
+              $('#previewAtestado').addClass('hidden');
+              $('#previewDeclaracao').removeClass('hidden');
+              $(this).text('Alternar para Atestado');
+          }
+      });
+
+      // Atestado: Atualizar prévia
+      function atualizarPreviaAtestado() {
+          const nomeInstituicao = $('#nomeInstituicao').val();
+          const cidade = $('#cidade').val();
+          const nome = $('#nomePaciente').val();
+          const cpf = $('#cpfPaciente').val();
+          const duracao = $('#duracao').val();
+          const dataInicio = $('#dataInicio').val();
+          const motivo = $('#motivo').val();
+          if (nomeInstituicao && cidade && nome && cpf && duracao && dataInicio) {
+              $('#previewInstituicao').text(nomeInstituicao);
+              $('#previewCidade').text(cidade);
+              $('#previewNome').text(nome);
+              $('#previewCPF').text(cpf);
+              $('#previewDuracao').text(duracao);
+              $('#previewDataInicio').text(formatarData(dataInicio));
+              $('#previewMotivo').text(motivo ? motivo : '_____________________________');
+              const hoje = new Date();
+              $('#previewDataHoraHoje').text(formatarDataHora(hoje));
+              $('#previewCidadeFooter').text(cidade);
+          }
+      }
+      $('#nomeInstituicao, #cidade, #nomePaciente, #cpfPaciente, #duracao, #dataInicio, #motivo').on('input change', atualizarPreviaAtestado);
+
+      // Atestado: Gerar PDF
+      $('#gerarPDFAtestado').click(function() {
+          atualizarPreviaAtestado();
+          const { jsPDF } = window.jspdf;
+          html2canvas(document.getElementById('pdfTemplateAtestado')).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const pageHeight = pdf.internal.pageSize.getHeight();
+              const imgWidth = canvas.width;
+              const imgHeight = canvas.height;
+              const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+              const imgX = (pageWidth - imgWidth * ratio) / 2;
+              const imgY = 20;
+              pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+              pdf.save('atestado_medico.pdf');
+          });
+      });
+
+      // Atestado: Salvar via AJAX
+      $('#atestadoForm').on('submit', function(event) {
+          event.preventDefault();
+          const data = {
+              pacienteId: $('#pacienteId').val(),
+              dataInicio: $('#dataInicio').val(),
+              duracaoDias: $('#duracao').val()
+          };
+          const token = localStorage.getItem('jwtToken');
+          $.ajax({
+              url: 'http://localhost:8080/api/atestado',
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(data),
+              headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+              success: function(response) {
+                  alert('Atestado salvo com sucesso!');
+              },
+              error: function(xhr, status, error) {
+                  alert('Erro ao salvar atestado: ' + xhr.responseText);
+              }
+          });
+      });
+
+      // Declaração: Atualizar prévia
+      function atualizarPreviaDeclaracao() {
+          const nome = $('#nomePacienteDec').val();
+          const rg = $('#rgPaciente').val();
+          const entrada = $('#entrada').val();
+          const saida = $('#saida').val();
+          const cidade = $('#cidadeDec').val();
+          const nomeInstituicao = $('#nomeInstituicaoDec').val();
+          if (nome && entrada && saida) {
+              $('#previewNomeDec').text(nome);
+              $('#previewRG').text(rg);
+              $('#previewData').text(entrada ? formatarData(entrada) : '___/___/____');
+              $('#previewHoraEntrada').text(entrada ? formatarHora(entrada) : '__h__');
+              $('#previewHoraSaida').text(saida ? formatarHora(saida) : '__h__');
+              $('#previewInstituicaoDec').text(nomeInstituicao || 'Inserir logo e nome da instituição');
+              $('#previewConsulta').prop('checked', $('#motivoConsulta').prop('checked'));
+              $('#previewExame').prop('checked', $('#motivoExame').prop('checked'));
+              $('#previewOutro').prop('checked', $('#motivoOutro').prop('checked'));
+              const dataAtual = entrada ? new Date(entrada) : new Date();
+              $('#previewCidadeDec').text(cidade || '________');
+              $('#previewDia').text(dataAtual.getDate().toString().padStart(2, '0'));
+              $('#previewMes').text(getNomeMes(dataAtual));
+              $('#previewAno').text(dataAtual.getFullYear());
+          }
+      }
+      $('#nomePacienteDec, #rgPaciente, #entrada, #saida, #motivoConsulta, #motivoExame, #motivoOutro, #cidadeDec, #nomeInstituicaoDec').on('input change', atualizarPreviaDeclaracao);
+
+      // Declaração: Gerar PDF
+      $('#gerarPDFDeclaracao').click(function() {
+          atualizarPreviaDeclaracao();
+          const { jsPDF } = window.jspdf;
+          html2canvas(document.getElementById('pdfTemplateDeclaracao')).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const pageHeight = pdf.internal.pageSize.getHeight();
+              const imgWidth = canvas.width;
+              const imgHeight = canvas.height;
+              const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+              const imgX = (pageWidth - imgWidth * ratio) / 2;
+              const imgY = 30;
+              pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+              pdf.save('declaracao_comparecimento.pdf');
+          });
+      });
+
+      // Declaração: Salvar via AJAX
+      $('#declaracaoForm').on('submit', function(event) {
+          event.preventDefault();
+          const pacienteId = $('#pacienteIdDec').val();
+          const entrada = $('#entrada').val();
+          const saida = $('#saida').val();
+          const motivos = [];
+          if ($('#motivoConsulta').prop('checked')) motivos.push('CONSULTA');
+          if ($('#motivoExame').prop('checked')) motivos.push('REALIZACAO_DE_EXAMES');
+          if ($('#motivoOutro').prop('checked')) motivos.push('OUTROS');
+          const data = {
+              pacienteId: pacienteId,
+              entrada: entrada,
+              saida: saida,
+              motivos: motivos
+          };
+          const token = localStorage.getItem('jwtToken');
+          $.ajax({
+              url: 'http://localhost:8080/api/declaracao',
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+              data: JSON.stringify(data),
+              success: function(response) {
+                  alert('Declaração criada com sucesso!');
+              },
+              error: function(xhr, status, error) {
+                  alert('Erro ao criar declaração! Confira o console para mais detalhes.');
+              }
+          });
+      });
+  });
+</script>
+</body>
+</html>
